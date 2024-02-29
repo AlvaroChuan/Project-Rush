@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Free run project.sln"
+    "dotnet.defaultSolution": "Free-Run-Project.sln"
 }
