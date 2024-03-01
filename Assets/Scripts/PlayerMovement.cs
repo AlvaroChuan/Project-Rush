@@ -24,14 +24,28 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float groundDistance;
     [SerializeField] private bool grounded;             //Serialized to help testing
 
-    [Header("Keybinds")]
+    [Header ("Slope Handling")]
+    [SerializeField] private float maxSlopeAngle;
+    [SerializeField] private RaycastHit slopeHit;
+    [SerializeField] private bool onSlope;
+
+    [Header ("Keybinds")]
     [SerializeField] private String jumpButton;
+    [SerializeField] private String crouchButton;
 
     //Non-serialized
     private float horizontalInput;
     private float verticalInput;
     private Vector3 moveDirection;
     private Rigidbody rb;
+    private MovementState movementState;
+
+    private enum MovementState
+    {
+        sprinting,
+        air,
+        sliding
+    }
 
     private void Awake()
     {
@@ -49,7 +63,15 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Move();
-        CustomGravity();
+        if(!CheckSlope())CustomGravity();
+        StateHandler();    
+    }
+
+    private void StateHandler()
+    {
+        if(grounded && onSlope) movementState = MovementState.sliding;
+        else if (grounded) movementState = MovementState.sprinting;
+        else movementState = MovementState.air;
     }
 
     private void GetInput()
@@ -67,6 +89,10 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        if(CheckSlope())
+        {
+            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+        }
         if(grounded) rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
         else rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
@@ -103,5 +129,25 @@ public class PlayerMovement : MonoBehaviour
     private void ResetJump()
     {
         canJump = true;
+    }
+
+    private bool CheckSlope()
+    {
+        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight / 2 + groundDistance, groundMask))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            onSlope = true;
+            return angle < maxSlopeAngle && angle != 0;
+        }
+        else
+        {
+            onSlope = false;
+            return false;
+        }
+    }
+
+    private Vector3 GetSlopeMoveDirection()
+    {
+        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
 }
