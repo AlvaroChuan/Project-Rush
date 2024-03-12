@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -17,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpCooldown;
     [SerializeField] private float airMultiplier;
     [SerializeField] private bool canJump = true;              //Serialized to help testing
+    [SerializeField] private bool stickToSurfaces = false;
 
     [Header ("Ground check")]
     [SerializeField] private LayerMask groundMask;
@@ -63,8 +60,8 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Move();
-        if(!CheckSlope())CustomGravity();
-        StateHandler();    
+        if(!CheckSlope()) CustomGravity();
+        StateHandler();
     }
 
     private void StateHandler()
@@ -88,18 +85,27 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
-        if(CheckSlope())
+        if(stickToSurfaces)
+        {
+            RaycastHit contactPoint;
+            if(Physics.Raycast(transform.position, Vector3.down, out contactPoint, playerHeight / 2 + groundDistance, groundMask))
+            {
+                transform.position = new Vector3(transform.position.x, contactPoint.point.y + playerHeight / 2, transform.position.z);
+                transform.up = contactPoint.normal;
+            }
+        }
+        else if (CheckSlope())
         {
             rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
         }
+        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
         if(grounded) rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
         else rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
     private void CustomGravity()
     {
-        rb.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
+        rb.AddForce(-transform.up * gravity, ForceMode.Acceleration);
     }
 
     private void CheckGround()
@@ -122,8 +128,9 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
-        rb.AddForce(Vector2.up * jumpForce, ForceMode.Impulse);
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         canJump = false;
+        transform.up = Vector3.up;
     }
 
     private void ResetJump()
