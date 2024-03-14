@@ -33,7 +33,15 @@ public class ThirdPersonCam : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
         Vector3 inputDir = orientation.forward * verticalInput + orientation.right * horizontalInput;
-
-        if (inputDir != Vector3.zero) playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
+        if (inputDir != Vector3.zero)
+        {
+            playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
+            playerObj.transform.localRotation = Quaternion.Euler(0, playerObj.localEulerAngles.y, 0);
+        }
+        if (player.up != Vector3.up)
+        {
+            playerObj.up = Vector3.Slerp(playerObj.up, player.up, Time.deltaTime * rotationSpeed);
+            playerObj.transform.localRotation = Quaternion.Euler(playerObj.localEulerAngles.x, 0, playerObj.localEulerAngles.z);
+        }
     }
 }

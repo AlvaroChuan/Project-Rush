@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -13,22 +14,27 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpCooldown;
     [SerializeField] private float airMultiplier;
     [SerializeField] private bool canJump = true;              //Serialized to help testing
-    [SerializeField] private bool stickToSurfaces = false;
+
+    [Header ("Surface alignment")]
+    [SerializeField] private bool stickToSurfaces = true;
+    [SerializeField] private LayerMask surfaceMask;
+    [SerializeField] private float surfaceAlignSpeed;
 
     [Header ("Ground check")]
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private float playerHeight;
     [SerializeField] private float groundDistance;
-    [SerializeField] private bool grounded;             //Serialized to help testing
+    [SerializeField] private bool grounded;                     //Serialized to help testing
 
-    [Header ("Slope Handling")]
-    [SerializeField] private float maxSlopeAngle;
-    [SerializeField] private RaycastHit slopeHit;
-    [SerializeField] private bool onSlope;
+    [Header ("Slide")]
+    [SerializeField] private float slideForce;
+    [SerializeField] private bool sliding = false;
+    [SerializeField] private float slideDuration;
+    [SerializeField] private float slideCooldown;
 
     [Header ("Keybinds")]
     [SerializeField] private String jumpButton;
-    [SerializeField] private String crouchButton;
+    [SerializeField] private String slideButton;
 
     //Non-serialized
     private float horizontalInput;
@@ -36,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 moveDirection;
     private Rigidbody rb;
     private MovementState movementState;
+    private RaycastHit contactPoint;
 
     private enum MovementState
     {
@@ -60,13 +67,13 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Move();
-        if(!CheckSlope()) CustomGravity();
+        CustomGravity();
         StateHandler();
     }
 
     private void StateHandler()
     {
-        if(grounded && onSlope) movementState = MovementState.sliding;
+        if(grounded && sliding) movementState = MovementState.sliding;
         else if (grounded) movementState = MovementState.sprinting;
         else movementState = MovementState.air;
     }
@@ -81,22 +88,22 @@ public class PlayerMovement : MonoBehaviour
             Jump();
             Invoke("ResetJump", jumpCooldown);
         }
+        if(Input.GetButton(slideButton) && grounded && !sliding)
+        {
+            StartCoroutine(Slide());
+        }
     }
 
     private void Move()
     {
         if(stickToSurfaces)
         {
-            RaycastHit contactPoint;
-            if(Physics.Raycast(transform.position, Vector3.down, out contactPoint, playerHeight / 2 + groundDistance, groundMask))
+            if(Physics.Raycast(transform.position, -transform.up, out contactPoint, playerHeight / 2 + groundDistance, surfaceMask))
             {
-                transform.position = new Vector3(transform.position.x, contactPoint.point.y + playerHeight / 2, transform.position.z);
+                //transform.position = new Vector3(transform.position.x, contactPoint.point.y + playerHeight / 2, transform.position.z);
+                //transform.up = Vector3.Slerp(transform.up, contactPoint.normal, surfaceAlignSpeed * Time.deltaTime);
                 transform.up = contactPoint.normal;
             }
-        }
-        else if (CheckSlope())
-        {
-            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
         }
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
         if(grounded) rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
@@ -110,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void CheckGround()
     {
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight / 2 + groundDistance, groundMask);
+        grounded = Physics.Raycast(transform.position, -transform.up, playerHeight / 2 + groundDistance, groundMask);
         if(grounded) rb.drag = groundDrag;
         else rb.drag = airDrag;
     }
@@ -130,7 +137,6 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
         canJump = false;
-        transform.up = Vector3.up;
     }
 
     private void ResetJump()
@@ -138,23 +144,21 @@ public class PlayerMovement : MonoBehaviour
         canJump = true;
     }
 
-    private bool CheckSlope()
+    private IEnumerator Slide()
     {
-        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight / 2 + groundDistance, groundMask))
+        sliding = true;
+        float timePassed = 0;
+        while(timePassed < slideDuration)
         {
-            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            onSlope = true;
-            return angle < maxSlopeAngle && angle != 0;
-        }
-        else
-        {
-            onSlope = false;
-            return false;
-        }
-    }
+            Vector3 slideDirection;
+            if(moveDirection != Vector3.zero) slideDirection = moveDirection;
+            else slideDirection = orientation.forward;
+            rb.AddForce(slideDirection.normalized * slideForce * 10f, ForceMode.Force);
 
-    private Vector3 GetSlopeMoveDirection()
-    {
-        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
+            timePassed += Time.deltaTime;
+            yield return null;
+        }
+        yield return new WaitForSeconds(slideCooldown - slideDuration);
+        sliding = false;
     }
 }
