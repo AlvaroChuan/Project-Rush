@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -30,12 +31,16 @@ public class PlayerMovement : MonoBehaviour
     [Header ("Slide")]
     [SerializeField] private float slideForce;
     [SerializeField] private bool sliding = false;
+    [SerializeField] private bool canSlide = true;
     [SerializeField] private float slideDuration;
     [SerializeField] private float slideCooldown;
 
     [Header ("Keybinds")]
     [SerializeField] private String jumpButton;
     [SerializeField] private String slideButton;
+
+    [Header ("Animations")]
+    [SerializeField] private Animator animator;
 
     //Non-serialized
     private float horizontalInput;
@@ -47,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
 
     private enum MovementState
     {
+        idle,
         sprinting,
         air,
         sliding
@@ -63,6 +69,7 @@ public class PlayerMovement : MonoBehaviour
         CheckGround();
         GetInput();
         SpeedControl();
+        AnimationHandler();
     }
 
     private void FixedUpdate()
@@ -75,8 +82,33 @@ public class PlayerMovement : MonoBehaviour
     private void StateHandler()
     {
         if(grounded && sliding) movementState = MovementState.sliding;
+        else if (grounded && moveDirection == Vector3.zero) movementState = MovementState.idle;
         else if (grounded) movementState = MovementState.sprinting;
         else movementState = MovementState.air;
+    }
+
+    private void AnimationHandler()
+    {
+        foreach(AnimatorControllerParameter parameter in animator.parameters)
+        {
+            animator.SetBool(parameter.name, false);
+        }
+
+        switch(movementState)
+        {
+            case MovementState.idle:
+                animator.SetBool("Idle", true);
+                break;
+            case MovementState.sprinting:
+                animator.SetBool("Running", true);
+                break;
+            case MovementState.air:
+                if(sliding) animator.SetBool("Sliding", true);
+                break;
+            case MovementState.sliding:
+                animator.SetBool("Sliding", true);
+                break;
+        }
     }
 
     private void GetInput()
@@ -89,7 +121,7 @@ public class PlayerMovement : MonoBehaviour
             Jump();
             Invoke("ResetJump", jumpCooldown);
         }
-        if(Input.GetButton(slideButton) && grounded && !sliding)
+        if(Input.GetButton(slideButton) && grounded && canSlide)
         {
             StartCoroutine(Slide());
         }
@@ -101,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if(Physics.Raycast(transform.position, -transform.up, out contactPoint, playerHeight / 2 + groundDistance, surfaceMask))
             {
-                transform.position = contactPoint.point + transform.up * ((playerHeight / 2) + 0.05f);
+                if(canJump) transform.position = contactPoint.point + transform.up * (playerHeight / 2);
                 transform.up = Vector3.Slerp(transform.up, contactPoint.normal, surfaceAlignSpeed * Time.deltaTime);
             }
             else transform.up = Vector3.Slerp(transform.up, Vector3.up, surfaceAlignSpeed * Time.deltaTime);
@@ -148,6 +180,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator Slide()
     {
         sliding = true;
+        canSlide = false;
         float timePassed = 0;
         while(timePassed < slideDuration)
         {
@@ -159,7 +192,8 @@ public class PlayerMovement : MonoBehaviour
             timePassed += Time.deltaTime;
             yield return null;
         }
-        yield return new WaitForSeconds(slideCooldown - slideDuration);
         sliding = false;
+        yield return new WaitForSeconds(slideCooldown - slideDuration);
+        canSlide = true;
     }
 }
