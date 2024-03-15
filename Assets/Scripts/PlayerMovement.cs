@@ -7,7 +7,8 @@ public class PlayerMovement : MonoBehaviour
     [Header ("Movement")]
     [SerializeField] private float moveSpeed;
     [SerializeField] private float gravity;
-    [SerializeField] private Transform orientation;
+    [SerializeField] private Transform orientationForward;
+    [SerializeField] private Transform orientationRight;
     [SerializeField] private float groundDrag;
     [SerializeField] private float airDrag;
     [SerializeField] private float jumpForce;
@@ -100,12 +101,12 @@ public class PlayerMovement : MonoBehaviour
         {
             if(Physics.Raycast(transform.position, -transform.up, out contactPoint, playerHeight / 2 + groundDistance, surfaceMask))
             {
-                //transform.position = new Vector3(transform.position.x, contactPoint.point.y + playerHeight / 2, transform.position.z);
-                //transform.up = Vector3.Slerp(transform.up, contactPoint.normal, surfaceAlignSpeed * Time.deltaTime);
-                transform.up = contactPoint.normal;
+                transform.position = contactPoint.point + transform.up * ((playerHeight / 2) + 0.05f);
+                transform.up = Vector3.Slerp(transform.up, contactPoint.normal, surfaceAlignSpeed * Time.deltaTime);
             }
+            else transform.up = Vector3.Slerp(transform.up, Vector3.up, surfaceAlignSpeed * Time.deltaTime);
         }
-        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        moveDirection = orientationForward.forward * verticalInput + orientationRight.right * horizontalInput;
         if(grounded) rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
         else rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
@@ -152,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 slideDirection;
             if(moveDirection != Vector3.zero) slideDirection = moveDirection;
-            else slideDirection = orientation.forward;
+            else slideDirection = orientationForward.forward;
             rb.AddForce(slideDirection.normalized * slideForce * 10f, ForceMode.Force);
 
             timePassed += Time.deltaTime;
