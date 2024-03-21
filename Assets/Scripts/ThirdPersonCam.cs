@@ -29,7 +29,6 @@ public class ThirdPersonCam : MonoBehaviour
         // rotate orientation
         Vector3 viewDir = player.position - transform.position;
         orientationForward.forward = viewDir.normalized;
-        Debug.Log(player.up);
         orientationRight.right = -Vector3.Cross(orientationForward.forward, player.up);
         orientationForward.forward = Vector3.Cross(orientationRight.right, player.up);
 

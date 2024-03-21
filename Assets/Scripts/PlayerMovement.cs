@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Diagnostics;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -35,9 +34,18 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float slideDuration;
     [SerializeField] private float slideCooldown;
 
+    [Header ("Grappling hook")]
+    [SerializeField] private Grapplinghook grapplingHook;
+    [SerializeField] private string grappleTag;
+    [SerializeField] private bool grappling = false;
+    [SerializeField] private float grappleForce;
+    [SerializeField] private float grappleMaxDistance;
+    [SerializeField] private float grappleCooldown;
+
     [Header ("Keybinds")]
     [SerializeField] private String jumpButton;
     [SerializeField] private String slideButton;
+    [SerializeField] private String grappleButton;
 
     [Header ("Animations")]
     [SerializeField] private Animator animator;
@@ -55,13 +63,15 @@ public class PlayerMovement : MonoBehaviour
         idle,
         sprinting,
         air,
-        sliding
+        sliding,
+        grappling
     }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
+        grapplingHook.Setup(grappleTag, grappleMaxDistance);
     }
 
     private void Update()
@@ -108,6 +118,9 @@ public class PlayerMovement : MonoBehaviour
             case MovementState.sliding:
                 animator.SetBool("Sliding", true);
                 break;
+            case MovementState.grappling:
+                animator.SetBool("Grappling", true);
+                break;
         }
     }
 
@@ -124,6 +137,12 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetButton(slideButton) && grounded && canSlide)
         {
             StartCoroutine(Slide());
+        }
+        if(Input.GetButton(grappleButton) && grapplingHook.GetGrapplePoint() != Vector3.zero)
+        {
+            grappling = true;
+            rb.AddForce((grapplingHook.GetGrapplePoint() - transform.position).normalized * grappleForce * 10, ForceMode.Impulse);
+            Invoke("ResetGrapple", grappleCooldown);
         }
     }
 
@@ -175,6 +194,11 @@ public class PlayerMovement : MonoBehaviour
     private void ResetJump()
     {
         canJump = true;
+    }
+
+    private void ResetGrapple()
+    {
+        grappling = false;
     }
 
     private IEnumerator Slide()
