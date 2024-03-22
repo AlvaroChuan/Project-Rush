@@ -29,18 +29,18 @@ public class PlayerMovement : MonoBehaviour
 
     [Header ("Slide")]
     [SerializeField] private float slideForce;
-    [SerializeField] private bool sliding = false;
-    [SerializeField] private bool canSlide = true;
     [SerializeField] private float slideDuration;
     [SerializeField] private float slideCooldown;
+    [SerializeField] private bool sliding = false;
+    [SerializeField] private bool canSlide = true;
 
     [Header ("Grappling hook")]
     [SerializeField] private Grapplinghook grapplingHook;
     [SerializeField] private string grappleTag;
-    [SerializeField] private bool grappling = false;
     [SerializeField] private float grappleForce;
     [SerializeField] private float grappleMaxDistance;
     [SerializeField] private float grappleCooldown;
+    [SerializeField] private bool grappling = false;
 
     [Header ("Keybinds")]
     [SerializeField] private String jumpButton;
@@ -49,6 +49,10 @@ public class PlayerMovement : MonoBehaviour
 
     [Header ("Animations")]
     [SerializeField] private Animator animator;
+
+    [Header ("Only for test build")]
+    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private float outOfBoundsY;
 
     //Non-serialized
     private float horizontalInput;
@@ -62,7 +66,8 @@ public class PlayerMovement : MonoBehaviour
     {
         idle,
         sprinting,
-        air,
+        idleJumping,
+        sprintingJumping,
         sliding,
         grappling
     }
@@ -91,10 +96,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void StateHandler()
     {
-        if(grounded && sliding) movementState = MovementState.sliding;
-        else if (grounded && moveDirection == Vector3.zero) movementState = MovementState.idle;
-        else if (grounded) movementState = MovementState.sprinting;
-        else movementState = MovementState.air;
+        if(grounded && moveDirection == Vector3.zero && canJump && !sliding) movementState = MovementState.idle;
+        else if (grounded && moveDirection == Vector3.zero && !canJump && !sliding) movementState = MovementState.idleJumping;
+        else if(grounded && moveDirection != Vector3.zero && canJump && !sliding) movementState = MovementState.sprinting;
+        else if(grounded && moveDirection != Vector3.zero && !canJump && !sliding) movementState = MovementState.sprintingJumping;
+        else if(grounded && moveDirection != Vector3.zero && canJump && sliding) movementState = MovementState.sliding;
+        else if(!grounded && moveDirection != Vector3.zero && !canJump && !sliding && grappling) movementState = MovementState.grappling;
     }
 
     private void AnimationHandler()
@@ -112,8 +119,13 @@ public class PlayerMovement : MonoBehaviour
             case MovementState.sprinting:
                 animator.SetBool("Running", true);
                 break;
-            case MovementState.air:
-                if(sliding) animator.SetBool("Sliding", true);
+            case MovementState.idleJumping:
+                animator.SetBool("Jumping", true);
+                animator.SetBool("Idle", true);
+                break;
+            case MovementState.sprintingJumping:
+                animator.SetBool("Jumping", true);
+                animator.SetBool("Running", true);
                 break;
             case MovementState.sliding:
                 animator.SetBool("Sliding", true);
@@ -138,11 +150,9 @@ public class PlayerMovement : MonoBehaviour
         {
             StartCoroutine(Slide());
         }
-        if(Input.GetButton(grappleButton) && grapplingHook.GetGrapplePoint() != Vector3.zero)
+        if(Input.GetButton(grappleButton) && grapplingHook.GetGrapplePoint() != Vector3.zero && !grappling)
         {
-            grappling = true;
-            rb.AddForce((grapplingHook.GetGrapplePoint() - transform.position).normalized * grappleForce * 10, ForceMode.Impulse);
-            Invoke("ResetGrapple", grappleCooldown);
+            StartCoroutine(Grapple());
         }
     }
 
@@ -152,7 +162,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if(Physics.Raycast(transform.position, -transform.up, out contactPoint, playerHeight / 2 + groundDistance, surfaceMask))
             {
-                if(canJump) transform.position = contactPoint.point + transform.up * (playerHeight / 2);
+                if(canJump && !grappling) transform.position = contactPoint.point + transform.up * (playerHeight / 2);
                 transform.up = Vector3.Slerp(transform.up, contactPoint.normal, surfaceAlignSpeed * Time.deltaTime);
             }
             else transform.up = Vector3.Slerp(transform.up, Vector3.up, surfaceAlignSpeed * Time.deltaTime);
@@ -160,6 +170,8 @@ public class PlayerMovement : MonoBehaviour
         moveDirection = orientationForward.forward * verticalInput + orientationRight.right * horizontalInput;
         if(grounded) rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
         else rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+
+        if(transform.position.y < outOfBoundsY) transform.position = spawnPoint.position; //Only for test build
     }
 
     private void CustomGravity()
@@ -196,11 +208,6 @@ public class PlayerMovement : MonoBehaviour
         canJump = true;
     }
 
-    private void ResetGrapple()
-    {
-        grappling = false;
-    }
-
     private IEnumerator Slide()
     {
         sliding = true;
@@ -219,5 +226,21 @@ public class PlayerMovement : MonoBehaviour
         sliding = false;
         yield return new WaitForSeconds(slideCooldown - slideDuration);
         canSlide = true;
+    }
+
+    private IEnumerator Grapple()
+    {
+        grappling = true;
+        rb.velocity = Vector3.zero;
+        rb.AddForce((grapplingHook.GetGrapplePoint() - transform.position).normalized * grappleForce * 10, ForceMode.Impulse);
+        float timePassed = 0;
+        while(timePassed < grappleCooldown)
+        {
+            grapplingHook.DrawRope();
+            timePassed += Time.deltaTime;
+            yield return null;
+        }
+        grappling = false;
+        grapplingHook.ClearRope();
     }
 }

@@ -20,7 +20,7 @@ public class Grapplinghook : MonoBehaviour
     {
         whatIsGrappleable = tag;
         grappleCollider.radius = grappleMaxDistance;
-        Debug.Log(whatIsGrappleable);
+        grappleCollider.center = new Vector3(0, 0, grappleMaxDistance - 1);
     }
 
     private void OnTriggerStay(Collider other)
@@ -30,7 +30,6 @@ public class Grapplinghook : MonoBehaviour
             if(!grapplePositions.Contains(other.gameObject))
             {
                 grapplePositions.Add(other.gameObject);
-                Debug.Log("Added " + other.gameObject.name);
             }
 
             foreach (GameObject hook in grapplePositions)
@@ -65,13 +64,23 @@ public class Grapplinghook : MonoBehaviour
     {
         if(grapplePositions.Contains(grapplePoint))
         {
-            Debug.Log("Returning " + grapplePoint.name);
             return grapplePoint.transform.position;
         }
         else
         {
-            Debug.Log("Returning zero");
             return Vector3.zero;
         }
+    }
+
+    public void DrawRope()
+    {
+        lr.positionCount = 2;
+        lr.SetPosition(0, transform.position);
+        lr.SetPosition(1, grapplePoint.transform.position);
+    }
+
+    public void ClearRope()
+    {
+        lr.positionCount = 0;
     }
 }

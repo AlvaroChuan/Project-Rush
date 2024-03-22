@@ -15,9 +15,6 @@ public class ThirdPersonCam : MonoBehaviour
     [Header("Camera settings")]
     [SerializeField] private float rotationSpeed;
 
-    //Non-serialized
-    private CinemachineFreeLook vcam;
-
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
