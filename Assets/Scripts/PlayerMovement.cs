@@ -78,6 +78,11 @@ public class PlayerMovement : MonoBehaviour
         rb.freezeRotation = true;
     }
 
+    private void Start()
+    {
+        grapplingHook.Setup(grappleTag, grappleMaxDistance);
+    }
+
     private void Update()
     {
         CheckGround();
@@ -230,7 +235,6 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator Grapple()
     {
-        grapplingHook.Setup(grappleTag, grappleMaxDistance);
         grappling = true;
         rb.velocity = Vector3.zero;
         rb.AddForce((grapplingHook.GetGrapplePoint() - transform.position).normalized * grappleForce * 10, ForceMode.Impulse);
