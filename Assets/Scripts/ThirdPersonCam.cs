@@ -15,10 +15,14 @@ public class ThirdPersonCam : MonoBehaviour
     [Header("Camera settings")]
     [SerializeField] private float rotationSpeed;
 
+    //Non-serialized
+    private CinemachineFreeLook vcam;
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        vcam = GetComponent<CinemachineFreeLook>();
     }
 
     private void Update()
@@ -39,6 +43,8 @@ public class ThirdPersonCam : MonoBehaviour
         {
             playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
             playerObj.transform.localRotation = Quaternion.Euler(0, playerObj.localEulerAngles.y, 0);
+            vcam.m_RecenterToTargetHeading.m_enabled = true;
         }
+        else vcam.m_RecenterToTargetHeading.m_enabled = false;
     }
 }
