@@ -76,7 +76,6 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-        grapplingHook.Setup(grappleTag, grappleMaxDistance);
     }
 
     private void Update()
@@ -140,6 +139,7 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
+
         if(Input.GetButtonDown(jumpButton) && canJump && grounded)
         {
             canJump = false;
@@ -230,6 +230,7 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator Grapple()
     {
+        grapplingHook.Setup(grappleTag, grappleMaxDistance);
         grappling = true;
         rb.velocity = Vector3.zero;
         rb.AddForce((grapplingHook.GetGrapplePoint() - transform.position).normalized * grappleForce * 10, ForceMode.Impulse);
