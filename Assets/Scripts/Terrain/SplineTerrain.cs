@@ -139,7 +139,7 @@ public class SplineTerrain : MonoBehaviour
             for( int j = 0; j < vertsInShape; j++ )
             {
                 int id = offset + j;
-                vertices[id] = path[i].LocalToWorld( shape.vert2Ds[j] );
+                //vertices[id] = path[i].LocalToWorld( shape.vert2Ds[j] );
                 normals[id] = path[i].LocalToWorldDirection( shape.normals[j] );
                 uvs[id] = new Vector2( shape.us[j], i / ((float)edgeLoops) );
 		    }
