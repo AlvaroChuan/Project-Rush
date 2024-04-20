@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3641142439124526954
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Water 2
+  m_Shader: {fileID: -6465566751694194690, guid: 08be5bb42d99aab409d23356664ceae2,
+    type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _RefractionNormal:
+        m_Texture: {fileID: 2800000, guid: b8a7fe95d6a8ad44a9c13de737e38264, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Distance: 4.9
+    - _FoamAmount: 0.23
+    - _FoamCuttOff: 1
+    - _FoamScale: 10
+    - _FoamSpeed: 0.25
+    - _HighFrequency: 1
+    - _NormalStrength: 0.25
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _RefractionSpeed: 0.075
+    - _RefractionStrength: 1
+    - _Smoothness: 0.9
+    - _WaveAmplitude: 0.04
+    - _WaveSpeen: 2.51
+    m_Colors:
+    - _DeepColor: {r: 0, g: 0.40632084, b: 0.5098038, a: 0.95686275}
+    - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RefractionScale: {r: 3, g: 10, b: 0, a: 0}
+    - _SurfaceColor: {r: 0, g: 0.6619381, b: 0.6862745, a: 0.84705883}
+    - _UV_1: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
