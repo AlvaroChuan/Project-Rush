@@ -46,61 +46,75 @@ public class RoadSegment : MonoBehaviour
         controlPointsScales.Add(controlPoint.transform.localScale);
     }
 
-    private void Awake()
+
+    public void Awake()
     {
-        mesh = GenerateMeshAsset();
-        if(controlPoints == null || controlPoints.Count == 0)
+        if (Application.isEditor && !Application.isPlaying)
         {
-            controlPoints = new List<Transform>();
-            controlPointsPositions = new List<Vector3>();
-            controlPointsRotations = new List<Quaternion>();
-            controlPointsScales = new List<Vector3>();
-            for(int i = 0; i < 2; i++) AddControlPoint(i);
+            mesh = GenerateMeshAsset();
+            if(controlPoints == null || controlPoints.Count == 0)
+            {
+                controlPoints = new List<Transform>();
+                controlPointsPositions = new List<Vector3>();
+                controlPointsRotations = new List<Quaternion>();
+                controlPointsScales = new List<Vector3>();
+                for(int i = 0; i < 2; i++) AddControlPoint(i);
+            }
+            else
+            {
+                controlPointsPositions = controlPoints.Select(cp => cp.localPosition).ToList();
+                controlPointsRotations = controlPoints.Select(cp => cp.localRotation).ToList();
+                controlPointsScales = controlPoints.Select(cp => cp.localScale).ToList();
+            }
+            if(shape2D == null) shape2D = Resources.Load<Mesh2D>("Art/Shapes2D/DefaultShape2D");
+            GenerateMesh();
+            GetComponent<MeshFilter>().sharedMesh = mesh;
+            GetComponent<MeshCollider>().sharedMesh = mesh;
+            GetComponent<MeshRenderer>().sharedMaterial = Resources.Load<Material>("Art/Materials/Prototype/Prototype_512x512_Blue1");
         }
-        if(shape2D == null) shape2D = Resources.Load<Mesh2D>("Art/Shapes2D/DefaultShape2D");
-        GenerateMesh();
-        GetComponent<MeshFilter>().sharedMesh = mesh;
-        GetComponent<MeshCollider>().sharedMesh = mesh;
-        GetComponent<MeshRenderer>().sharedMaterial = Resources.Load<Material>("Art/Materials/Prototype/Prototype_512x512_Blue1");
     }
 
     public void Update()
     {
-        for(int i = 0; i < controlPoints.Count; i++)
+        if(Application.isEditor && !Application.isPlaying)
         {
-            if(controlPoints[i].position != controlPointsPositions[i] || controlPoints[i].rotation != controlPointsRotations[i] || controlPoints[i].localScale != controlPointsScales[i])
+            for(int i = 0; i < controlPoints.Count; i++)
             {
-                controlPointsPositions[i] = controlPoints[i].position;
-                controlPointsRotations[i] = controlPoints[i].rotation;
-                controlPointsScales[i] = controlPoints[i].localScale;
+                if(controlPoints[i].localPosition != controlPointsPositions[i] || controlPoints[i].localRotation != controlPointsRotations[i] || controlPoints[i].localScale != controlPointsScales[i])
+                {
+                    controlPointsPositions[i] = controlPoints[i].localPosition;
+                    controlPointsRotations[i] = controlPoints[i].localRotation;
+                    controlPointsScales[i] = controlPoints[i].localScale;
+                    GenerateMesh();
+                }
+            }
+            if(addControlPoint)
+            {
+                AddControlPoint(controlPoints.Count);
+                addControlPoint = false;
+                GenerateMesh();
+            }
+            if(removeControlPoint && controlPoints.Count > 2)
+            {
+                if(controlPoints.Count > 2)
+                {
+                    DestroyImmediate(controlPoints[controlPoints.Count - 1].gameObject);
+                    controlPoints.RemoveAt(controlPoints.Count - 1);
+                    controlPointsPositions.RemoveAt(controlPointsPositions.Count - 1);
+                    controlPointsRotations.RemoveAt(controlPointsRotations.Count - 1);
+                    controlPointsScales.RemoveAt(controlPointsScales.Count - 1);
+                    removeControlPoint = false;
+                    GenerateMesh();
+                }
+            }
+            else if(removeControlPoint) removeControlPoint = false;
+            if(edgeRingCount != previousEdgeRingCount)
+            {
+                previousEdgeRingCount = edgeRingCount;
                 GenerateMesh();
             }
         }
-        if(addControlPoint)
-        {
-            AddControlPoint(controlPoints.Count);
-            addControlPoint = false;
-            GenerateMesh();
-        }
-        if(removeControlPoint && controlPoints.Count > 2)
-        {
-            if(controlPoints.Count > 2)
-            {
-                DestroyImmediate(controlPoints[controlPoints.Count - 1].gameObject);
-                controlPoints.RemoveAt(controlPoints.Count - 1);
-                controlPointsPositions.RemoveAt(controlPointsPositions.Count - 1);
-                controlPointsRotations.RemoveAt(controlPointsRotations.Count - 1);
-                controlPointsScales.RemoveAt(controlPointsScales.Count - 1);
-                removeControlPoint = false;
-                GenerateMesh();
-            }
-        }
-        else if(removeControlPoint) removeControlPoint = false;
-        if(edgeRingCount != previousEdgeRingCount)
-        {
-            previousEdgeRingCount = edgeRingCount;
-            GenerateMesh();
-        }
+
     }
 
     private void GenerateMesh()
@@ -229,12 +243,10 @@ public class RoadSegment : MonoBehaviour
     {
         Mesh mesh_ = new Mesh();
         mesh_.name = name;
-        #if UNITY_EDITOR
         var path = $"Assets/Resources/Art/Models/{mesh_.name}.asset";
 
         AssetDatabase.CreateAsset(mesh_, path);
         EditorGUIUtility.PingObject(mesh_);
-        #endif
         return mesh_;
     }
 }
