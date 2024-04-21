@@ -39,7 +39,17 @@ public class RoadSegment : MonoBehaviour
     {
         GameObject controlPoint = new GameObject($"p{index}");
         controlPoint.transform.SetParent(transform);
-        controlPoint.transform.localPosition = new Vector3(0, 0, 10 * index);
+        if(index == 0)
+        {
+            controlPoint.transform.localPosition = new Vector3(0, 0, 0);
+            controlPoint.transform.localScale = new Vector3(1, 1, 8);
+        }
+        else
+        {
+            controlPoint.transform.localPosition = new Vector3(0, 0, controlPoints[index - 1].localPosition.z + 20);
+            controlPoint.transform.localRotation = controlPoints[index - 1].localRotation;
+            controlPoint.transform.localScale = new Vector3(1, 1, 8);
+        }
         controlPoints.Add(controlPoint.transform);
         controlPointsPositions.Add(controlPoint.transform.position);
         controlPointsRotations.Add(controlPoint.transform.rotation);
