@@ -13,6 +13,7 @@ public class RoadSegment : MonoBehaviour
 
     [Range(2, 32)]
     [SerializeField] private int edgeRingCount = 8;
+    private int previousEdgeRingCount = 8;
 
     [Range(0, 1)]
     [SerializeField] private float t = 0;
@@ -94,9 +95,11 @@ public class RoadSegment : MonoBehaviour
                 GenerateMesh();
             }
         }
-        else if(removeControlPoint && controlPoints.Count <= 2)
+        else if(removeControlPoint) removeControlPoint = false;
+        if(edgeRingCount != previousEdgeRingCount)
         {
-            removeControlPoint = false;
+            previousEdgeRingCount = edgeRingCount;
+            GenerateMesh();
         }
     }
 
