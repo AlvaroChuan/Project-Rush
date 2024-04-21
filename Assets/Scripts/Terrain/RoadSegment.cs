@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.Linq;
 
-[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
+[AddComponentMenu("Splines/Custom Spline Extrude")]
+[ExecuteInEditMode]
 public class RoadSegment : MonoBehaviour
 {
     [SerializeField] private Mesh2D shape2D;
@@ -15,10 +18,12 @@ public class RoadSegment : MonoBehaviour
     [SerializeField] private float t = 0;
     [SerializeField] private int bezierSegment = 0;
     [SerializeField] private bool showRingShape = true;
-
-    [SerializeField] private Transform startPoint;
-    [SerializeField] private Transform endPoint;
-    [SerializeField] private Transform[] controlPoints;
+    [SerializeField] private bool addControlPoint = false;
+    [SerializeField] private bool removeControlPoint = false;
+    [SerializeField] private List<Transform> controlPoints;
+    private List<Vector3> controlPointsPositions;
+    private List<Quaternion> controlPointsRotations;
+    private List<Vector3> controlPointsScales;
 
     private Mesh mesh;
 
@@ -29,16 +34,70 @@ public class RoadSegment : MonoBehaviour
         else return controlPoints[(i + 1) / 3].TransformPoint(Vector3.back * transform.localScale.z);
     }
 
-    private void Awake()
+    private void AddControlPoint(int index)
     {
-        mesh = new Mesh();
-        mesh.name = "Road Segment";
-        GetComponent<MeshFilter>().sharedMesh = mesh;
+        GameObject controlPoint = new GameObject($"p{index}");
+        controlPoint.transform.SetParent(transform);
+        controlPoint.transform.localPosition = new Vector3(0, 0, 10 * index);
+        controlPoints.Add(controlPoint.transform);
+        controlPointsPositions.Add(controlPoint.transform.position);
+        controlPointsRotations.Add(controlPoint.transform.rotation);
+        controlPointsScales.Add(controlPoint.transform.localScale);
     }
 
-    private void Update()
+    private void Awake()
     {
+        mesh = GenerateMeshAsset();
+        if(controlPoints == null || controlPoints.Count == 0)
+        {
+            controlPoints = new List<Transform>();
+            controlPointsPositions = new List<Vector3>();
+            controlPointsRotations = new List<Quaternion>();
+            controlPointsScales = new List<Vector3>();
+            for(int i = 0; i < 2; i++) AddControlPoint(i);
+        }
+        if(shape2D == null) shape2D = Resources.Load<Mesh2D>("Art/Shapes2D/DefaultShape2D");
         GenerateMesh();
+        GetComponent<MeshFilter>().sharedMesh = mesh;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
+        GetComponent<MeshRenderer>().sharedMaterial = Resources.Load<Material>("Art/Materials/Prototype/Prototype_512x512_Blue1");
+    }
+
+    public void Update()
+    {
+        for(int i = 0; i < controlPoints.Count; i++)
+        {
+            if(controlPoints[i].position != controlPointsPositions[i] || controlPoints[i].rotation != controlPointsRotations[i] || controlPoints[i].localScale != controlPointsScales[i])
+            {
+                controlPointsPositions[i] = controlPoints[i].position;
+                controlPointsRotations[i] = controlPoints[i].rotation;
+                controlPointsScales[i] = controlPoints[i].localScale;
+                GenerateMesh();
+            }
+        }
+        if(addControlPoint)
+        {
+            AddControlPoint(controlPoints.Count);
+            addControlPoint = false;
+            GenerateMesh();
+        }
+        if(removeControlPoint && controlPoints.Count > 2)
+        {
+            if(controlPoints.Count > 2)
+            {
+                DestroyImmediate(controlPoints[controlPoints.Count - 1].gameObject);
+                controlPoints.RemoveAt(controlPoints.Count - 1);
+                controlPointsPositions.RemoveAt(controlPointsPositions.Count - 1);
+                controlPointsRotations.RemoveAt(controlPointsRotations.Count - 1);
+                controlPointsScales.RemoveAt(controlPointsScales.Count - 1);
+                removeControlPoint = false;
+                GenerateMesh();
+            }
+        }
+        else if(removeControlPoint && controlPoints.Count <= 2)
+        {
+            removeControlPoint = false;
+        }
     }
 
     private void GenerateMesh()
@@ -51,7 +110,7 @@ public class RoadSegment : MonoBehaviour
         List<Vector3> normals = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
 
-        for (int bezierSegment = 0; bezierSegment < controlPoints.Length - 1; bezierSegment++)
+        for (int bezierSegment = 0; bezierSegment < controlPoints.Count - 1; bezierSegment++)
         {
             for (int ring = 0; ring < edgeRingCount; ring++)
             {
@@ -68,7 +127,7 @@ public class RoadSegment : MonoBehaviour
 
         //Triangles
         List<int> triIndices = new List<int>();
-        for (int ring = 0; ring < (edgeRingCount * (controlPoints.Length - 1)) - 1; ring++)
+        for (int ring = 0; ring < (edgeRingCount * (controlPoints.Count - 1)) - 1; ring++)
         {
             int rootIndex = ring * shape2D.VertexCount;
             int nextRootIndex = (ring + 1) * shape2D.VertexCount;
@@ -92,15 +151,17 @@ public class RoadSegment : MonoBehaviour
         mesh.SetNormals(normals);
         mesh.SetUVs(0, uvs);
         mesh.SetTriangles(triIndices, 0);
+        GetComponent<MeshFilter>().sharedMesh = mesh;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     public void OnDrawGizmos()
     {
-        for (int i = 0; i < 4 + (3 * (controlPoints.Length - 2)); i++)
+        for (int i = 0; i < 4 + (3 * (controlPoints.Count - 2)); i++)
         {
             Gizmos.DrawSphere(GetPos(i), 0.2f);
         }
-        for(int i = 0; i < controlPoints.Length - 1; i++)
+        for(int i = 0; i < controlPoints.Count - 1; i++)
         {
             Handles.DrawBezier(GetPos(0 + (3 * i)), GetPos(3 + (3 * i)), GetPos(1 + (3 * i)), GetPos(2 + (3 * i)), Color.red, EditorGUIUtility.whiteTexture, 1f);
         }
@@ -144,8 +205,8 @@ public class RoadSegment : MonoBehaviour
 
     private float GetApproxLength(int precision = 8)
     {
-        Vector3[] points = new Vector3[precision * (controlPoints.Length - 1)];
-        for(int i = 0; i < controlPoints.Length - 1; i++)
+        Vector3[] points = new Vector3[precision * (controlPoints.Count - 1)];
+        for(int i = 0; i < controlPoints.Count - 1; i++)
         {
             for (int j = 0; j < precision; j++)
             {
@@ -159,5 +220,18 @@ public class RoadSegment : MonoBehaviour
             distance += Vector3.Distance(points[i], points[i+1]);
         }
         return distance;
+    }
+
+    internal Mesh GenerateMeshAsset()
+    {
+        Mesh mesh_ = new Mesh();
+        mesh_.name = name;
+        #if UNITY_EDITOR
+        var path = $"Assets/Resources/Art/Models/{mesh_.name}.asset";
+
+        AssetDatabase.CreateAsset(mesh_, path);
+        EditorGUIUtility.PingObject(mesh_);
+        #endif
+        return mesh_;
     }
 }
