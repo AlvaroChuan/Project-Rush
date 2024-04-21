@@ -18,7 +18,7 @@ public class RoadSegment : MonoBehaviour
     [Range(0, 1)]
     [SerializeField] private float t = 0;
     [SerializeField] private int bezierSegment = 0;
-    [SerializeField] private bool showRingShape = true;
+    [SerializeField] private bool showRingShape = false;
     [SerializeField] private bool addControlPoint = false;
     [SerializeField] private bool removeControlPoint = false;
     [SerializeField] private List<Transform> controlPoints;
@@ -31,8 +31,8 @@ public class RoadSegment : MonoBehaviour
     private Vector3 GetPos(int i )
     {
         if(i % 3 == 0) return controlPoints[i / 3].position;
-        else if((i - 1) % 3 == 0) return controlPoints[(i - 1)/ 3].TransformPoint(Vector3.forward * transform.localScale.z);
-        else return controlPoints[(i + 1) / 3].TransformPoint(Vector3.back * transform.localScale.z);
+        else if((i - 1) % 3 == 0) return controlPoints[(i - 1)/ 3].transform.position + controlPoints[(i - 1)/ 3].transform.forward * controlPoints[(i - 1)/ 3].localScale.z;
+        else return controlPoints[(i + 1) / 3].transform.position - controlPoints[(i + 1) / 3].transform.forward  * controlPoints[(i + 1) / 3].localScale.x;
     }
 
     private void AddControlPoint(int index)
@@ -42,13 +42,13 @@ public class RoadSegment : MonoBehaviour
         if(index == 0)
         {
             controlPoint.transform.localPosition = new Vector3(0, 0, 0);
-            controlPoint.transform.localScale = new Vector3(1, 1, 8);
+            controlPoint.transform.localScale = new Vector3(8, 1, 8);
         }
         else
         {
-            controlPoint.transform.localPosition = new Vector3(0, 0, controlPoints[index - 1].localPosition.z + 20);
+            controlPoint.transform.localPosition =  controlPoints[index - 1].localPosition + controlPoints[index - 1].forward.normalized * (10 + controlPoints[index - 1].localScale.z);
             controlPoint.transform.localRotation = controlPoints[index - 1].localRotation;
-            controlPoint.transform.localScale = new Vector3(1, 1, 8);
+            controlPoint.transform.localScale = new Vector3(8, 1, 8);
         }
         controlPoints.Add(controlPoint.transform);
         controlPointsPositions.Add(controlPoint.transform.position);
