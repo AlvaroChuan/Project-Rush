@@ -19,9 +19,10 @@ public class RoadSegment : MonoBehaviour
     [SerializeField] private float t = 0;
     [SerializeField] private int bezierSegment = 0;
     [SerializeField] private bool showRingShape = false;
+    [Header ("Modify Control Points")]
     [SerializeField] private bool addControlPoint = false;
     [SerializeField] private bool removeControlPoint = false;
-    [SerializeField] private List<Transform> controlPoints;
+    [HideInInspector, SerializeField] private List<Transform> controlPoints;
     private List<Vector3> controlPointsPositions;
     private List<Quaternion> controlPointsRotations;
     private List<Vector3> controlPointsScales;
@@ -80,7 +81,7 @@ public class RoadSegment : MonoBehaviour
             GenerateMesh();
             GetComponent<MeshFilter>().sharedMesh = mesh;
             GetComponent<MeshCollider>().sharedMesh = mesh;
-            GetComponent<MeshRenderer>().sharedMaterial = Resources.Load<Material>("Art/Materials/Prototype/Prototype_512x512_Blue1");
+            if(GetComponent<MeshRenderer>().sharedMaterial == null) GetComponent<MeshRenderer>().sharedMaterial = Resources.Load<Material>("Art/Materials/Prototype/Prototype_512x512_Blue1");
         }
     }
 

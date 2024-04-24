@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using Unity.VisualScripting;
 
 public class ThirdPersonCam : MonoBehaviour
 {
@@ -44,6 +45,7 @@ public class ThirdPersonCam : MonoBehaviour
             playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
             playerObj.transform.localRotation = Quaternion.Euler(0, playerObj.localEulerAngles.y, 0);
             vcam.m_RecenterToTargetHeading.m_enabled = true;
+            transform.up = Vector3.Slerp(transform.up, player.up, Time.deltaTime * rotationSpeed);
         }
         else vcam.m_RecenterToTargetHeading.m_enabled = false;
     }
