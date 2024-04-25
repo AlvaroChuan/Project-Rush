@@ -12,6 +12,7 @@ public class ThirdPersonCam : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private Transform playerObj;
     [SerializeField] private Rigidbody rb;
+    [SerializeField] private Transform FollowDamper;
 
     [Header("Camera settings")]
     [SerializeField] private float rotationSpeed;
@@ -39,13 +40,14 @@ public class ThirdPersonCam : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
         Vector3 inputDir;
+        FollowDamper.transform.position = player.position;
         inputDir = orientationForward.forward * verticalInput + orientationRight.right * horizontalInput;
         if (inputDir != Vector3.zero)
         {
             playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
             playerObj.transform.localRotation = Quaternion.Euler(0, playerObj.localEulerAngles.y, 0);
             vcam.m_RecenterToTargetHeading.m_enabled = true;
-            transform.up = Vector3.Slerp(transform.up, player.up, Time.deltaTime * rotationSpeed);
+            FollowDamper.transform.up = Vector3.Slerp(FollowDamper.transform.up, player.up, Time.deltaTime * rotationSpeed / 4);
         }
         else vcam.m_RecenterToTargetHeading.m_enabled = false;
     }
