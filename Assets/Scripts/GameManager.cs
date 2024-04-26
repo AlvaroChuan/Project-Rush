@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
     {
         lap++;
         lapText.text = "Lap: " + lap + "/3";
-        if (lap == 3)
+        if (lap == 4)
         {
             EndGame();
         }
