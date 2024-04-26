@@ -175,10 +175,10 @@ MonoBehaviour:
     m_Value: 1
   blueShadows:
     m_OverrideState: 1
-    m_Value: 0.35
+    m_Value: 0.292
   greenShadows:
     m_OverrideState: 1
-    m_Value: 0.15
+    m_Value: 0.06
   redHighlights:
     m_OverrideState: 1
     m_Value: 0.7

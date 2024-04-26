@@ -49,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header ("Animations")]
     [SerializeField] private Animator animator;
+    [SerializeField] private ParticleSystem dust;
 
     [Header ("Only for test build")]
     [SerializeField] private Transform spawnPoint;
@@ -61,6 +62,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private MovementState movementState;
     private RaycastHit contactPoint;
+    public bool canMove = false;
 
     private enum MovementState
     {
@@ -86,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         CheckGround();
-        GetInput();
+        if(canMove) GetInput();
         SpeedControl();
         AnimationHandler();
     }
@@ -119,23 +121,29 @@ public class PlayerMovement : MonoBehaviour
         {
             case MovementState.idle:
                 animator.SetBool("Idle", true);
+                if(dust.isPlaying) dust.Stop();
                 break;
             case MovementState.sprinting:
                 animator.SetBool("Running", true);
+                if(!dust.isPlaying) dust.Play();
                 break;
             case MovementState.idleJumping:
                 animator.SetBool("Jumping", true);
                 animator.SetBool("Idle", true);
+                if(dust.isPlaying) dust.Stop();
                 break;
             case MovementState.sprintingJumping:
                 animator.SetBool("Jumping", true);
                 animator.SetBool("Running", true);
+                if(dust.isPlaying) dust.Stop();
                 break;
             case MovementState.sliding:
                 animator.SetBool("Sliding", true);
+                if(!dust.isPlaying) dust.Play();
                 break;
             case MovementState.grappling:
                 animator.SetBool("Grappling", true);
+                if(dust.isPlaying) dust.Stop();
                 break;
         }
     }
@@ -211,6 +219,16 @@ public class PlayerMovement : MonoBehaviour
     private void ResetJump()
     {
         canJump = true;
+    }
+
+    public void SetSpawnPoint(Transform newSpawnPoint)
+    {
+        spawnPoint = newSpawnPoint;
+    }
+
+    public Transform GetSpawnPoint()
+    {
+        return spawnPoint;
     }
 
     private IEnumerator Slide()

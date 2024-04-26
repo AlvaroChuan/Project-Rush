@@ -6,12 +6,14 @@ Texture2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: z__MainGradientTextureTex{"mode":0,"colorKeys":[{"color":{"r":1.0,"g":1.0,"b":1.0,"a":1.0},"time":0.5000076293945313},{"color":{"r":0.9292452931404114,"g":1.0,"b":1.0,"a":1.0},"time":1.0}],"alphaKeys":[{"alpha":1.0,"time":0.5000076293945313},{"alpha":1.0,"time":1.0}]}
+  m_Name: z__MainGradientTextureTex{"mode":0,"colorKeys":[{"color":{"r":0.7358490228652954,"g":0.7358490228652954,"b":0.7358490228652954,"a":1.0},"time":0.5000076293945313},{"color":{"r":0.7216981053352356,"g":1.0,"b":1.0,"a":1.0},"time":1.0}],"alphaKeys":[{"alpha":1.0,"time":0.5000076293945313},{"alpha":1.0,"time":1.0}]}
   m_ImageContentsHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
   m_IsAlphaChannelOptional: 0
-  serializedVersion: 3
+  serializedVersion: 2
   m_Width: 256
   m_Height: 1
   m_CompleteImageSize: 1024
@@ -30,7 +32,7 @@ Texture2D:
   m_TextureDimension: 2
   m_TextureSettings:
     serializedVersion: 2
-    m_FilterMode: 0
+    m_FilterMode: 1
     m_Aniso: 1
     m_MipBias: 0
     m_WrapU: 1
@@ -40,7 +42,7 @@ Texture2D:
   m_ColorSpace: 1
   m_PlatformBlob: 
   image data: 1024
-  _typelessdata: fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffdfffffffdfffffffdfffffffdfffffffdfffffffdfffffffdfffffffcfffffffcfffffffcfffffffcfffffffcfffffffcfffffffcfffffffbfffffffbfffffffbfffffffbfffffffbfffffffbfffffffbfffffffafffffffafffffffafffffffafffffffafffffffafffffffafffffff9fffffff9fffffff9fffffff9fffffff9fffffff9fffffff9fffffff8fffffff8fffffff8fffffff8fffffff8fffffff8fffffff8fffffff7fffffff7fffffff7fffffff7fffffff7fffffff7fffffff7fffffff6fffffff6fffffff6fffffff6fffffff6fffffff6fffffff6fffffff5fffffff5fffffff5fffffff5fffffff5fffffff5fffffff5fffffff4fffffff4fffffff4fffffff4fffffff4fffffff4fffffff4fffffff3fffffff3fffffff3fffffff3fffffff3fffffff3fffffff3fffffff2fffffff2fffffff2fffffff2fffffff2fffffff2fffffff2fffffff1fffffff1fffffff1fffffff1fffffff1fffffff1fffffff1fffffff0fffffff0fffffff0fffffff0fffffff0fffffff0fffffff0fffffff0ffffffefffffffefffffffefffffffefffffffefffffffefffffffefffffffeeffffffeeffffffeeffffffeeffffffeeffffffeeffffffeeffffffedffffffedffffffedffffffedffff
+  _typelessdata: ffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbcbcffbcbdbdffbcbdbdffbcbebeffbbbfbfffbbbfbfffbbc0c0ffbbc0c0ffbbc1c1ffbbc1c1ffbbc2c2ffbbc2c2ffbbc3c3ffbbc3c3ffbbc4c4ffbbc4c4ffbbc5c5ffbbc5c5ffbbc6c6ffbbc6c6ffbbc7c7ffbbc8c8ffbbc8c8ffbbc9c9ffbbc9c9ffbbcacaffbbcacaffbbcbcbffbbcbcbffbbccccffbbccccffbbcdcdffbbcdcdffbbceceffbbceceffbbcfcfffbbcfcfffbbd0d0ffbbd1d1ffbad1d1ffbad2d2ffbad2d2ffbad3d3ffbad3d3ffbad4d4ffbad4d4ffbad5d5ffbad5d5ffbad6d6ffbad6d6ffbad7d7ffbad7d7ffbad8d8ffbad8d8ffbad9d9ffbad9d9ffbadadaffbadbdbffbadbdbffbadcdcffbadcdcffbaddddffbaddddffbadedeffbadedeffbadfdfffbadfdfffbae0e0ffbae0e0ffbae1e1ffbae1e1ffbae2e2ffbae2e2ffbae3e3ffbae4e4ffb9e4e4ffb9e5e5ffb9e5e5ffb9e6e6ffb9e6e6ffb9e7e7ffb9e7e7ffb9e8e8ffb9e8e8ffb9e9e9ffb9e9e9ffb9eaeaffb9eaeaffb9ebebffb9ebebffb9ececffb9ededffb9ededffb9eeeeffb9eeeeffb9efefffb9efefffb9f0f0ffb9f0f0ffb9f1f1ffb9f1f1ffb9f2f2ffb9f2f2ffb9f3f3ffb9f3f3ffb9f4f4ffb9f4f4ffb9f5f5ffb9f5f5ffb9f6f6ffb8f7f7ffb8f7f7ffb8f8f8ffb8f8f8ffb8f9f9ffb8f9f9ffb8fafaffb8fafaffb8fbfbffb8fbfbffb8fcfcffb8fcfcffb8fdfdffb8fdfdffb8fefeffb8fefeffb8ffff
   m_StreamData:
     serializedVersion: 2
     offset: 0
@@ -169,7 +171,7 @@ Material:
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ShadowAmount: 0.8
+    - _ShadowAmount: 0.512
     - _ShadowDistortion: 0.3
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
@@ -190,7 +192,6 @@ Material:
     - _ShadowRange: {r: 0.3, g: 0.85, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!28 &4078262240538509541
 Texture2D:
   m_ObjectHideFlags: 0
@@ -201,8 +202,10 @@ Texture2D:
   m_ImageContentsHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
   m_IsAlphaChannelOptional: 0
-  serializedVersion: 3
+  serializedVersion: 2
   m_Width: 256
   m_Height: 1
   m_CompleteImageSize: 1024
@@ -221,7 +224,7 @@ Texture2D:
   m_TextureDimension: 2
   m_TextureSettings:
     serializedVersion: 2
-    m_FilterMode: 0
+    m_FilterMode: 1
     m_Aniso: 1
     m_MipBias: 0
     m_WrapU: 1
