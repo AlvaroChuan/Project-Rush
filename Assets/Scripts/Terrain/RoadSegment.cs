@@ -29,6 +29,7 @@ public class RoadSegment : MonoBehaviour
 
     private Mesh mesh;
 
+#if UNITY_EDITOR
     private Vector3 GetPos(int i )
     {
         if(i % 3 == 0) return controlPoints[i / 3].position;
@@ -260,4 +261,5 @@ public class RoadSegment : MonoBehaviour
         EditorGUIUtility.PingObject(mesh_);
         return mesh_;
     }
+    #endif
 }

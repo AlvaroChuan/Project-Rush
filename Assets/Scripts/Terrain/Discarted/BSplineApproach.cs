@@ -14,6 +14,7 @@ public class BSplineApproach : MonoBehaviour
     [SerializeField] Transform[] controlPoints;
     private Mesh mesh;
 
+#if UNITY_EDITOR
     private Vector3 GetPos(int i) => controlPoints[i].position;
 
     private void Awake()
@@ -144,4 +145,5 @@ public class BSplineApproach : MonoBehaviour
         }
         return distance;
     }
+    #endif
 }

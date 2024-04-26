@@ -19,7 +19,7 @@ public class RoadSegmentSingleBezier : MonoBehaviour
     [SerializeField] private Transform endPoint;
 
     private Mesh mesh;
-
+#if UNITY_EDITOR
     private Vector3 GetPos(int i )
     {
         switch(i)
@@ -156,4 +156,5 @@ public class RoadSegmentSingleBezier : MonoBehaviour
         }
         return distance;
     }
+#endif
 }
