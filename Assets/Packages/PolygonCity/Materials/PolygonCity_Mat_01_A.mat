@@ -9,7 +9,7 @@ Texture2D:
   m_Name: z__GradientRampTex{"mode":0,"colorKeys":[{"color":{"r":0.0,"g":0.0,"b":0.0,"a":1.0},"time":0.0},{"color":{"r":1.0,"g":1.0,"b":1.0,"a":1.0},"time":1.0}],"alphaKeys":[{"alpha":1.0,"time":0.0},{"alpha":1.0,"time":1.0}]}
   m_ImageContentsHash:
     serializedVersion: 2
-    Hash: 00000000000000000000000000000000
+    Hash: b763862c716ed4874293cafe1a7511fb
   m_ForcedFallbackFormat: 4
   m_DownscaleFallback: 0
   m_IsAlphaChannelOptional: 0
@@ -60,6 +60,7 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - DR_BAKED_GI
   - DR_LIGHT_ATTENUATION
   - DR_OUTLINE_ON
   - _DETAILMAPBLENDINGMODE_MULTIPLY
@@ -190,7 +191,7 @@ Material:
     - _OutlineEnabled: 1
     - _OutlineScale: 1
     - _OutlineWidth: 1
-    - _OverrideBakedGi: 0
+    - _OverrideBakedGi: 1
     - _OverrideLightAttenuation: 1
     - _OverrideLightmapDir: 0
     - _Parallax: 0.02
@@ -236,7 +237,7 @@ Texture2D:
   m_Name: z__BakedGIRampTex{"mode":0,"colorKeys":[{"color":{"r":0.0,"g":0.0,"b":0.0,"a":1.0},"time":0.0},{"color":{"r":1.0,"g":1.0,"b":1.0,"a":1.0},"time":1.0}],"alphaKeys":[{"alpha":1.0,"time":0.0},{"alpha":1.0,"time":1.0}]}
   m_ImageContentsHash:
     serializedVersion: 2
-    Hash: 00000000000000000000000000000000
+    Hash: b763862c716ed4874293cafe1a7511fb
   m_ForcedFallbackFormat: 4
   m_DownscaleFallback: 0
   m_IsAlphaChannelOptional: 0
