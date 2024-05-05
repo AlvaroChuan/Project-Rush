@@ -149,7 +149,7 @@ public class RoadSegment : MonoBehaviour
                 {
                     verts.Add(transform.InverseTransformPoint(op.LocalToWorldPos(shape2D.vertices[i].point)));
                     normals.Add(transform.InverseTransformDirection(op.LocalToWorldVec(shape2D.vertices[i].normal)));
-                    uvs.Add(new Vector2(shape2D.vertices[i].u, t * GetApproxLength() / uSpan));
+                    uvs.Add(new Vector2(shape2D.vertices[i].u, (t + bezierSegment) * GetApproxLength() / uSpan));
                 }
             }
         }
@@ -232,7 +232,7 @@ public class RoadSegment : MonoBehaviour
     }
 
 
-    private float GetApproxLength(int precision = 8)
+    private float GetApproxLength(int precision = 100)
     {
         Vector3[] points = new Vector3[precision * (controlPoints.Count - 1)];
         for(int i = 0; i < controlPoints.Count - 1; i++)
