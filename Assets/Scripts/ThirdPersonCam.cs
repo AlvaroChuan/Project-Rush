@@ -19,12 +19,14 @@ public class ThirdPersonCam : MonoBehaviour
 
     //Non-serialized
     private CinemachineFreeLook vcam;
+    private PlayerMovement playerMovement;
 
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         vcam = GetComponent<CinemachineFreeLook>();
+        playerMovement = player.GetComponent<PlayerMovement>();
     }
 
     private void Update()
@@ -37,18 +39,28 @@ public class ThirdPersonCam : MonoBehaviour
 
 
         // roate player object
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
-        Vector3 inputDir;
-        FollowDamper.transform.position = player.position;
-        inputDir = orientationForward.forward * verticalInput + orientationRight.right * horizontalInput;
-        if (inputDir != Vector3.zero)
+        if(playerMovement.canMove)
         {
-            playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
-            playerObj.transform.localRotation = Quaternion.Euler(0, playerObj.localEulerAngles.y, 0);
-            vcam.m_RecenterToTargetHeading.m_enabled = true;
-            FollowDamper.transform.up = Vector3.Slerp(FollowDamper.transform.up, player.up, Time.deltaTime * rotationSpeed / 4);
+            vcam.m_XAxis.m_InputAxisName = "Mouse X";
+            vcam.m_YAxis.m_InputAxisName = "Mouse Y";
+            float horizontalInput = Input.GetAxis("Horizontal");
+            float verticalInput = Input.GetAxis("Vertical");
+            Vector3 inputDir;
+            FollowDamper.transform.position = player.position;
+            inputDir = orientationForward.forward * verticalInput + orientationRight.right * horizontalInput;
+            if (inputDir != Vector3.zero)
+            {
+                playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
+                playerObj.transform.localRotation = Quaternion.Euler(0, playerObj.localEulerAngles.y, 0);
+                vcam.m_RecenterToTargetHeading.m_enabled = true;
+                FollowDamper.transform.up = Vector3.Slerp(FollowDamper.transform.up, player.up, Time.deltaTime * rotationSpeed / 4);
+            }
+            else vcam.m_RecenterToTargetHeading.m_enabled = false;
         }
-        else vcam.m_RecenterToTargetHeading.m_enabled = false;
+        else
+        {
+            vcam.m_XAxis.m_InputAxisName = "";
+            vcam.m_YAxis.m_InputAxisName = "";
+        }
     }
 }

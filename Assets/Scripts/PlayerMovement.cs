@@ -59,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private Vector3 moveDirection;
-    private Rigidbody rb;
+    public Rigidbody rb;
     private MovementState movementState;
     private RaycastHit contactPoint;
     public bool canMove = false;
@@ -89,13 +89,14 @@ public class PlayerMovement : MonoBehaviour
     {
         CheckGround();
         if(canMove) GetInput();
+        else moveDirection = Vector3.zero;
         SpeedControl();
         AnimationHandler();
     }
 
     private void FixedUpdate()
     {
-        Move();
+        if(canMove) Move();
         CustomGravity();
         StateHandler();
     }
@@ -103,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
     private void StateHandler()
     {
         if(grounded && moveDirection == Vector3.zero && canJump && !sliding) movementState = MovementState.idle;
-        else if (grounded && moveDirection == Vector3.zero && !canJump && !sliding) movementState = MovementState.idleJumping;
+        else if(grounded && moveDirection == Vector3.zero && !canJump && !sliding) movementState = MovementState.idleJumping;
         else if(grounded && moveDirection != Vector3.zero && canJump && !sliding) movementState = MovementState.sprinting;
         else if(grounded && moveDirection != Vector3.zero && !canJump && !sliding) movementState = MovementState.sprintingJumping;
         else if(grounded && moveDirection != Vector3.zero && canJump && sliding) movementState = MovementState.sliding;
@@ -152,6 +153,8 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
+
+        if(Input.GetButtonDown("Pause")) GameManager.instance.Pause();
 
         if(Input.GetButtonDown(jumpButton) && canJump && grounded)
         {

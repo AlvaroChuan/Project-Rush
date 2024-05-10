@@ -8,7 +8,7 @@ public class Starbit : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameManager.instance.AddPuntuation(10);
+            GameManager.instance.AddPuntuation(10, 0);
             gameObject.SetActive(false);
         }
     }

@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -8,100 +6,132 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    [SerializeField] private Text puntuationText1;
-    [SerializeField] private Text puntuationText2;
-    [SerializeField] private Text lapText;
-    [SerializeField] private GameObject endGamePanel;
-    [SerializeField] private Text countDownText;
-    [SerializeField] private PlayerMovement player;
-    [SerializeField] private Starbit[] starbits;
-
-    private int puntuation = 0;
-    private int lap = 0;
+    private HUDManager hudManager;
+    [SerializeField] private GameObject[] starbits;
+    private bool gameStarted = false;
+    private int[] scores = new int[5];
+    private int lap = 3;
+    private int speed;
+    private Rigidbody playerRigidbody;
 
     private void Start()
     {
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(gameObject);
+            FindHUDManager();
+            if(SceneManager.GetActiveScene().name != "Main Menu") StartRace();
         }
         else
         {
-            GameManager.instance.StartGame();
             Destroy(gameObject);
+            GameManager.instance.FindHUDManager();
+            if(SceneManager.GetActiveScene().name != "Main Menu") GameManager.instance.StartRace();
         }
-        StartCoroutine(CountDown());
     }
 
-    public void StartGame()
+    public void StartRace()
     {
-        puntuationText1.text = "Score: " + puntuation;
-        puntuationText2.text = "Score: " + puntuation;
-        lapText.text = "Lap: " + lap;
-        StartCoroutine(CountDown());
+        gameStarted = true;
+        scores = new int[] {0,0,0,0,0};
+        lap = 3;
+        playerRigidbody = hudManager.playerMovement.gameObject.GetComponent<Rigidbody>();
+        GetStarBits();
+        hudManager.StartRace();
     }
 
-    public void AddPuntuation(int points)
+    private void Update()
     {
-        puntuation += points;
-        puntuationText1.text = "Score: " + puntuation;
-        puntuationText2.text = "Score: " + puntuation;
+        if (gameStarted)
+        {
+            speed = (int) playerRigidbody.velocity.magnitude;
+            if (speed > 0) speed += 100;
+            hudManager.UpdateSpeed(speed);
+            hudManager.UpdateLap(lap);
+            hudManager.UpdateScore(scores[0], 0);
+        }
+    }
+
+    public void GetStarBits()
+    {
+        GameObject starbitsContainer = GameObject.Find("Starbits");
+        starbits = new GameObject[starbitsContainer.transform.childCount];
+        for (int i = 0; i < starbitsContainer.transform.childCount; i++)
+        {
+            starbits[i] = starbitsContainer.transform.GetChild(i).gameObject;
+        }
+    }
+
+    public void ResetStarbits()
+    {
+        foreach (GameObject starbit in starbits)
+        {
+            starbit.SetActive(true);
+        }
+    }
+
+    public void AddPuntuation(int points, int playerNumber)
+    {
+        scores[playerNumber] += points;
     }
 
     public void NextLap()
     {
         lap++;
-        lapText.text = "Lap: " + lap + "/3";
-        if (lap == 4)
+        hudManager.UpdateLap(lap);
+        if (lap > 3)
         {
-            EndGame();
+            gameStarted = false;
+            hudManager.EndRace();
         }
     }
 
-    public void EndGame()
+    public void FindHUDManager()
     {
-        endGamePanel.SetActive(true);
-        StartCoroutine(CountDownRestart());
+        hudManager = FindObjectOfType<HUDManager>();
     }
 
     public void RestartGame()
     {
-        SceneManager.LoadScene("Level 1");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        gameStarted = false;
     }
 
-    public void QuitGame()
+    public void ExitGame()
     {
         Application.Quit();
     }
 
-    public void ResetStarbits()
+    public void LoadLevel(int i)
     {
-        foreach (Starbit starbit in starbits)
+        SceneManager.LoadScene("Level " + i);
+    }
+
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene("Main Menu");
+        gameStarted = false;
+    }
+
+    public void Pause()
+    {
+        if (Time.timeScale == 1) hudManager.Pause();
+        else hudManager.Resume();
+    }
+
+    public int GetFinalPosition()
+    {
+        int position = 1;
+        for (int i = 0; i < scores.Length; i++)
         {
-            starbit.gameObject.SetActive(true);
+            if (scores[i] > scores[0]) position++;
         }
+        return position;
     }
 
-    private IEnumerator CountDown()
+    public int GetScore(int playerNumber)
     {
-        countDownText.text = "3";
-        yield return new WaitForSeconds(1);
-        countDownText.text = "2";
-        yield return new WaitForSeconds(1);
-        countDownText.text = "1";
-        yield return new WaitForSeconds(1);
-        countDownText.text = "GO!";
-        yield return new WaitForSeconds(1);
-        countDownText.gameObject.SetActive(false);
-        AddPuntuation(0);
-        puntuationText1.gameObject.SetActive(true);
-        lapText.gameObject.SetActive(true);
-        player.canMove = true;
-    }
-
-    private IEnumerator CountDownRestart()
-    {
-        yield return new WaitForSeconds(5);
-        RestartGame();
+        return scores[playerNumber];
     }
 }
