@@ -8,9 +8,9 @@ public class CheckPoint : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && other.GetComponent<PlayerMovement>().GetSpawnPoint() != this.transform.GetChild(2).transform)
+        if (other.CompareTag("Player"))
         {
-            other.GetComponent<PlayerMovement>().SetSpawnPoint(transform.GetChild(2).transform);
+            other.GetComponent<PlayerMovement>().SetSpawnPoint();
             if(firstCheckPoint)
             {
                 GameManager.instance.NextLap();

@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     {
         gameStarted = true;
         scores = new int[] {0,0,0,0,0};
-        lap = 3;
+        lap = 0;
         playerRigidbody = hudManager.playerMovement.gameObject.GetComponent<Rigidbody>();
         GetStarBits();
         hudManager.StartRace();

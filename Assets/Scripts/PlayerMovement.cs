@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool grounded;                     //Serialized to help testing
 
     [Header ("Slide")]
-    [SerializeField] private float slideForce;
+    [SerializeField] private float slideSpeedExtra;
     [SerializeField] private float slideDuration;
     [SerializeField] private float slideCooldown;
     [SerializeField] private bool sliding = false;
@@ -51,8 +51,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private ParticleSystem dust;
 
-    [Header ("Only for test build")]
-    [SerializeField] private Transform spawnPoint;
+    [Header ("Bounds")]
+    [SerializeField] private Vector3 spawnPointPosition;
+    [SerializeField] private Quaternion spawnPointRotation;
     [SerializeField] private float outOfBoundsY;
 
     //Non-serialized
@@ -187,7 +188,12 @@ public class PlayerMovement : MonoBehaviour
         if(grounded) rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
         else rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
 
-        if(transform.position.y < outOfBoundsY) transform.position = spawnPoint.position; //Only for test build
+        if(transform.position.y < outOfBoundsY)
+        {
+            transform.position = spawnPointPosition;
+            transform.rotation = spawnPointRotation;
+            rb.velocity = Vector3.zero;
+        }
     }
 
     private void CustomGravity()
@@ -204,12 +210,25 @@ public class PlayerMovement : MonoBehaviour
 
     private void SpeedControl()
     {
-        Vector3 horizontalVel = new Vector3(rb.velocity.x, 0, rb.velocity.z);
-        if(horizontalVel.magnitude > moveSpeed)
+        Vector3 limitedVel = new Vector3();
+        if(grounded)
         {
-            Vector3 limitedVel = horizontalVel.normalized * moveSpeed;
-            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            if(rb.velocity.magnitude > moveSpeed)
+            {
+                limitedVel = rb.velocity.normalized * moveSpeed;
+                rb.velocity = limitedVel;
+            }
         }
+        else
+        {
+            Vector3 horizontalVel = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+            if(horizontalVel.magnitude > moveSpeed)
+            {
+                limitedVel = horizontalVel.normalized * moveSpeed;
+                rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);
+            }
+        }
+
     }
 
     private void Jump()
@@ -224,31 +243,29 @@ public class PlayerMovement : MonoBehaviour
         canJump = true;
     }
 
-    public void SetSpawnPoint(Transform newSpawnPoint)
+    public void SetSpawnPoint()
     {
-        spawnPoint = newSpawnPoint;
-    }
-
-    public Transform GetSpawnPoint()
-    {
-        return spawnPoint;
+        if(grounded) spawnPointPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        else
+        {
+            Physics.Raycast(transform.position, -transform.up, out contactPoint, playerHeight / 2 + groundDistance * 10, surfaceMask);
+            spawnPointPosition = contactPoint.point + transform.up * (playerHeight / 2);
+        }
+        spawnPointRotation = new Quaternion(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
     }
 
     private IEnumerator Slide()
     {
         sliding = true;
         canSlide = false;
+        moveSpeed += slideSpeedExtra;
         float timePassed = 0;
         while(timePassed < slideDuration)
         {
-            Vector3 slideDirection;
-            if(moveDirection != Vector3.zero) slideDirection = moveDirection;
-            else slideDirection = orientationForward.forward;
-            rb.AddForce(slideDirection.normalized * slideForce * 10f, ForceMode.Force);
-
             timePassed += Time.deltaTime;
             yield return null;
         }
+        moveSpeed -= slideSpeedExtra;
         sliding = false;
         yield return new WaitForSeconds(slideCooldown - slideDuration);
         canSlide = true;
