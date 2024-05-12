@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.VFX;
 
 public class HUDManager : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private Text finalScore;
     [SerializeField] private Text finalScoreShadow;
+    [SerializeField] private VisualEffect speedLines;
     public PlayerMovement playerMovement;
 
     public void StartRace()
@@ -47,6 +49,13 @@ public class HUDManager : MonoBehaviour
         Speed.text = math.floor(speed).ToString() + " Km/h";
         SpeedShadow.text = math.floor(speed).ToString() + " Km/h";
         Speedometer.fillAmount = speed / 160;
+        if(speed > 0)
+        {
+            speedLines.SetFloat("radious", 2.5f);
+            speedLines.SetFloat("Min Speed", (speed * 3.5f) / 160);
+            speedLines.SetFloat("Max Speed", (speed * 6.5f) / 160);
+        }
+        else    speedLines.SetFloat("radious", 100);
     }
 
     public void EndRace()
