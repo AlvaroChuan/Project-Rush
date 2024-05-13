@@ -22,6 +22,7 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private Image Speedometer;
     [SerializeField] private GameObject optionsPanel;
     [SerializeField] private GameObject creditsPanel;
+    [SerializeField] private GameObject controlsPanel;
     [SerializeField] private Text finalScore;
     [SerializeField] private Text finalScoreShadow;
     [SerializeField] private VisualEffect speedLines;
@@ -144,6 +145,12 @@ public class HUDManager : MonoBehaviour
     {
         SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         creditsPanel.SetActive(false);
+    }
+
+    public void ShowControls()
+    {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
+        controlsPanel.SetActive(true);
     }
 
     public void RestartGame()
