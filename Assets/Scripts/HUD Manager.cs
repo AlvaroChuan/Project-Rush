@@ -108,11 +108,12 @@ public class HUDManager : MonoBehaviour
 
     private IEnumerator CountDownSecuence()
     {
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < 14; i++)
         {
-            CountDown.text = (12 - i).ToString();
-            CountDownShadow.text = (12 - i).ToString();
-            yield return new WaitForSeconds(1);
+            CountDown.text = (14 - i).ToString();
+            CountDownShadow.text = (14 - i).ToString();
+            if(i != 13)yield return new WaitForSeconds(1);
+            else yield return new WaitForSeconds(0.5f);
         }
         SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.START);
         CountDown.text = "GO!";

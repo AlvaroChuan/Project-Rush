@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEngine.VFX;
 
-public class PlayerMovement : MonoBehaviour
+public class AIMovement : MonoBehaviour
 {
     [Header ("Movement")]
     [SerializeField] private float moveSpeed;
@@ -35,20 +36,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool sliding = false;
     [SerializeField] private bool canSlide = true;
 
-    [Header ("Grappling hook")]
-    [SerializeField] private Grapplinghook grapplingHook;
-    [SerializeField] private string grappleTag;
-    [SerializeField] private float grappleForce;
-    [SerializeField] private float grappleMaxDistance;
-    [SerializeField] private float grappleCooldown;
-    [SerializeField] private bool grappling = false;
-
-    [Header ("Keybinds")]
-    [SerializeField] private String jumpButton;
-    [SerializeField] private String slideButton;
-    [SerializeField] private String grappleButton;
-
     [Header ("Animations")]
+    [SerializeField] private Transform playerObj;
+    [SerializeField] private float rotationSpeed;
     [SerializeField] private Animator animator;
     [SerializeField] private ParticleSystem dust;
 
@@ -59,17 +49,19 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask wallMask;
 
     //Non-serialized
-    private float horizontalInput;
-    private float verticalInput;
     private Vector3 moveDirection;
     public Rigidbody rb;
     private MovementState movementState;
     private RaycastHit contactPoint;
-    public bool canMove = false;
+    public bool canMove = true;
 
     //For Machine Learning
     public float distanceToLeftWall;
     public float distanceToRightWall;
+    public float horizontalInput;
+    public float verticalInput;
+    public int jumpInput;
+    public int slideInput;
 
     private enum MovementState
     {
@@ -87,19 +79,15 @@ public class PlayerMovement : MonoBehaviour
         rb.freezeRotation = true;
     }
 
-    private void Start()
-    {
-        grapplingHook.Setup(grappleTag, grappleMaxDistance);
-    }
-
     private void Update()
     {
         CheckGround();
-        if(canMove) GetInput();
+        if(canMove) ReadInput();
         else moveDirection = Vector3.zero;
         SpeedControl();
         AnimationHandler();
         GetWallsDistances();
+        RotatePlayer();
     }
 
     private void FixedUpdate()
@@ -107,6 +95,13 @@ public class PlayerMovement : MonoBehaviour
         if(canMove) Move();
         CustomGravity();
         StateHandler();
+    }
+
+    private void RotatePlayer()
+    {
+        Vector3 inputDir = new Vector3(horizontalInput, 0, verticalInput);
+        playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
+        playerObj.localRotation = Quaternion.Euler(0, playerObj.localEulerAngles.y, 0);
     }
 
     private void GetWallsDistances()
@@ -129,7 +124,6 @@ public class PlayerMovement : MonoBehaviour
         else if(grounded && moveDirection != Vector3.zero && canJump && !sliding) movementState = MovementState.sprinting;
         else if(grounded && moveDirection != Vector3.zero && !canJump && !sliding) movementState = MovementState.sprintingJumping;
         else if(grounded && moveDirection != Vector3.zero && canJump && sliding) movementState = MovementState.sliding;
-        else if(!grounded && moveDirection != Vector3.zero && !canJump && !sliding && grappling) movementState = MovementState.grappling;
     }
 
     private void AnimationHandler()
@@ -163,45 +157,30 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetBool("Sliding", true);
                 if(!dust.isPlaying) dust.Play();
                 break;
-            case MovementState.grappling:
-                animator.SetBool("Grappling", true);
-                if(dust.isPlaying) dust.Stop();
-                break;
         }
     }
 
-    private void GetInput()
+    private void ReadInput()
     {
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
-
-        if(Input.GetButtonDown("Pause")) GameManager.instance.Pause();
-
-        if(Input.GetButtonDown(jumpButton) && canJump && grounded)
+        if(jumpInput == 1 && canJump && grounded)
         {
             canJump = false;
             Jump();
             Invoke("ResetJump", jumpCooldown);
         }
-        if(Input.GetButton(slideButton) && grounded && canSlide)
+        if(slideInput == 1 && grounded && canSlide)
         {
             StartCoroutine(Slide());
-            SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.SLIDE);
-        }
-        if(Input.GetButton(grappleButton) && grapplingHook.GetGrapplePoint() != Vector3.zero && !grappling)
-        {
-            StartCoroutine(Grapple());
         }
     }
 
     private void Move()
     {
-        SoundManager.instance.PlayFootsteps(movementState.Equals(MovementState.sprinting));
         if(stickToSurfaces)
         {
             if(Physics.Raycast(transform.position, -transform.up, out contactPoint, playerHeight / 2 + groundDistance, surfaceMask))
             {
-                if(canJump && !grappling) transform.position = contactPoint.point + transform.up * (playerHeight / 2);
+                if(canJump) transform.position = contactPoint.point + transform.up * (playerHeight / 2);
                 transform.up = Vector3.Slerp(transform.up, contactPoint.normal, surfaceAlignSpeed * Time.deltaTime);
             }
             else transform.up = Vector3.Slerp(transform.up, Vector3.up, surfaceAlignSpeed * Time.deltaTime);
@@ -291,21 +270,5 @@ public class PlayerMovement : MonoBehaviour
         sliding = false;
         yield return new WaitForSeconds(slideCooldown - slideDuration);
         canSlide = true;
-    }
-
-    private IEnumerator Grapple()
-    {
-        grappling = true;
-        rb.velocity = Vector3.zero;
-        rb.AddForce((grapplingHook.GetGrapplePoint() - transform.position).normalized * grappleForce * 10, ForceMode.Impulse);
-        float timePassed = 0;
-        while(timePassed < grappleCooldown)
-        {
-            grapplingHook.DrawRope();
-            timePassed += Time.deltaTime;
-            yield return null;
-        }
-        grappling = false;
-        grapplingHook.ClearRope();
     }
 }

@@ -17,5 +17,10 @@ public class CheckPoint : MonoBehaviour
                 GameManager.instance.ResetStarbits();
             }
         }
+        else if (other.CompareTag("AI"))
+        {
+            other.GetComponent<RunnerAgent>().GiveReward();
+            other.GetComponent<AIMovement>().SetSpawnPoint();
+        }
     }
 }
