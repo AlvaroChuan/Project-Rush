@@ -2305,7 +2305,7 @@ MonoBehaviour:
   Speedometer: {fileID: 0}
   optionsPanel: {fileID: 1050309665}
   creditsPanel: {fileID: 1033752462}
-  controlsPanel: {fileID: 0}
+  controlsPanel: {fileID: 1925379579}
   finalScore: {fileID: 0}
   finalScoreShadow: {fileID: 0}
   speedLines: {fileID: 0}
