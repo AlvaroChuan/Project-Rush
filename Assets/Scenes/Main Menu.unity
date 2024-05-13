@@ -1518,13 +1518,25 @@ MonoBehaviour:
   m_FillRect: {fileID: 372672591}
   m_HandleRect: {fileID: 591480339}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
+  m_MinValue: 0.001
+  m_MaxValue: 100
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.001
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1136494219}
+        m_TargetAssemblyTypeName: HUDManager, Assembly-CSharp
+        m_MethodName: SetSFXVolume
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &996600982
 GameObject:
   m_ObjectHideFlags: 0
@@ -1615,7 +1627,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1033752463
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1844,6 +1856,8 @@ MonoBehaviour:
   finalScore: {fileID: 0}
   finalScoreShadow: {fileID: 0}
   speedLines: {fileID: 0}
+  musicSlider: {fileID: 1218354908}
+  sfxSlider: {fileID: 995456030}
   playerMovement: {fileID: 0}
 --- !u!4 &1136494220
 Transform:
@@ -2023,13 +2037,25 @@ MonoBehaviour:
   m_FillRect: {fileID: 786640622}
   m_HandleRect: {fileID: 2117053712}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
+  m_MinValue: 0.001
+  m_MaxValue: 100
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.001
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1136494219}
+        m_TargetAssemblyTypeName: HUDManager, Assembly-CSharp
+        m_MethodName: SetMusicVolume
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1243977964
 GameObject:
   m_ObjectHideFlags: 0
@@ -3573,8 +3599,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Main Developer:\n- \xC1lvaro Chuan D\xEDaz-Maroto\n\nSome assets:\n- Wenrexa\n-
-    Clazy animations\n- Synty studios\n- Dustyroom\n- Render Knight"
+  m_Text: "Main Developer:\n- \xC1lvaro Chuan D\xEDaz-Maroto\nSome assets:\n- Wenrexa\n-
+    Clazy animations\n- Synty studios\n- Dustyroom\n- Render Knight\n- Escalona Music"
 --- !u!222 &1811461302
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3901,14 +3927,15 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2042513160}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
+  OutputAudioMixerGroup: {fileID: 262329226578071996, guid: fc5d3e8ea1deabf4f9d18999532de0a3,
+    type: 2}
+  m_audioClip: {fileID: 8300000, guid: c2f25b223e030ec4eac6b385adcac812, type: 3}
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -3999,12 +4026,13 @@ AudioSource:
   m_GameObject: {fileID: 2042513160}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 262329226578071996, guid: fc5d3e8ea1deabf4f9d18999532de0a3,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 1
-  Loop: 1
+  m_Pitch: 3
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -4095,9 +4123,10 @@ AudioSource:
   m_GameObject: {fileID: 2042513160}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 536775438408084503, guid: fc5d3e8ea1deabf4f9d18999532de0a3,
+    type: 2}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 1

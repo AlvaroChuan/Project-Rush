@@ -167,6 +167,7 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetButton(slideButton) && grounded && canSlide)
         {
             StartCoroutine(Slide());
+            SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.SLIDE);
         }
         if(Input.GetButton(grappleButton) && grapplingHook.GetGrapplePoint() != Vector3.zero && !grappling)
         {
@@ -176,6 +177,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
+        SoundManager.instance.PlayFootsteps(movementState.Equals(MovementState.sprinting));
         if(stickToSurfaces)
         {
             if(Physics.Raycast(transform.position, -transform.up, out contactPoint, playerHeight / 2 + groundDistance, surfaceMask))

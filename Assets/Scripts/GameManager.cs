@@ -22,12 +22,14 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             FindHUDManager();
             if(SceneManager.GetActiveScene().name != "Main Menu") StartRace();
+            else SoundManager.instance.PlayMusicByIndex(SoundManager.OST.MAIN_MENU);
         }
         else
         {
             Destroy(gameObject);
             GameManager.instance.FindHUDManager();
             if(SceneManager.GetActiveScene().name != "Main Menu") GameManager.instance.StartRace();
+            else SoundManager.instance.PlayMusicByIndex(SoundManager.OST.MAIN_MENU);
         }
     }
 
@@ -39,6 +41,7 @@ public class GameManager : MonoBehaviour
         playerRigidbody = hudManager.playerMovement.gameObject.GetComponent<Rigidbody>();
         GetStarBits();
         hudManager.StartRace();
+        SoundManager.instance.PlayMusicByIndex(SoundManager.OST.LELVEL_1);
     }
 
     private void Update()
@@ -112,6 +115,7 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("Main Menu");
         gameStarted = false;
+        SoundManager.instance.StopMusic();
     }
 
     public void Pause()

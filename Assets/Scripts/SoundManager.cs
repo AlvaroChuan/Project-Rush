@@ -16,16 +16,18 @@ public class SoundManager : MonoBehaviour
     public struct SFX
     {
         public const int BUTTON_PRESSED = 0;
-        public const int STEPS = 1;
-        public const int PICK_UP = 2;
-        public const int COUNTDOWN = 3;
-        public const int RACE_END = 4;
+        public const int COUNTDOWN = 1;
+        public const int FOOTSTEPS = 2;
+        public const int RACE_END = 3;
+        public const int SLIDE = 4;
+        public const int STARBIT = 5;
+        public const int START  = 6;
     }
 
     public struct OST
     {
-        public const int MAIN_MENU = 0;
-        public const int LELVEL_1 = 1;
+        public const int LELVEL_1 = 0;
+        public const int MAIN_MENU = 1;
     }
 
     void Awake()
@@ -36,8 +38,8 @@ public class SoundManager : MonoBehaviour
         sfxs = Resources.LoadAll<AudioClip>("Sound/SFX");
         osts = Resources.LoadAll<AudioClip>("Sound/Music");
         AudioSource[] sources = gameObject.GetComponents<AudioSource>();
-        sfxSource = sources[0];
-        ostSource = sources[1];
+        ostSource = sources[0];
+        sfxSource = sources[1];
         footstepsSource = sources[2];
         StartCoroutine(SFXCleaner());
     }
@@ -98,6 +100,16 @@ public class SoundManager : MonoBehaviour
         ostSource.Stop();
     }
 
+    public void PauseMusic()
+    {
+        ostSource.Pause();
+    }
+
+    public void ResumeMusic()
+    {
+        ostSource.UnPause();
+    }
+
     public void StopSFX(int index)
     {
         AudioSource[] sources = gameObject.GetComponents<AudioSource>();
@@ -114,26 +126,26 @@ public class SoundManager : MonoBehaviour
 
     public void SetSFXVolume(float volume)
     {
-        mixer.SetFloat("VolumeSFX", volume);
+        mixer.SetFloat("VolumeSFX",  Mathf.Log10(volume / 100) * 20f);
     }
 
     public void SetMusicVolume(float volume)
     {
-        mixer.SetFloat("VolumeMusic", volume);
+        mixer.SetFloat("VolumeMusic", Mathf.Log10(volume / 100) * 20f);
     }
 
     public float GetSFXVolume()
     {
         float volume;
         mixer.GetFloat("VolumeSFX", out volume);
-        return volume;
+        return Mathf.Pow(10f, volume / 20f) * 100f;
     }
 
     public float GetMusicVolume()
     {
         float volume;
         mixer.GetFloat("VolumeMusic", out volume);
-        return volume;
+        return Mathf.Pow(10f, volume / 20f) * 100f;
     }
 
     public void PlayFootsteps(bool Walking)

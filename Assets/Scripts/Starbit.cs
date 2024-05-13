@@ -8,6 +8,7 @@ public class Starbit : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.STARBIT);
             GameManager.instance.AddPuntuation(10, 0);
             gameObject.SetActive(false);
         }

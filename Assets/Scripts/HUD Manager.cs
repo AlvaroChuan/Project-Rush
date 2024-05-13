@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.VFX;
 
@@ -24,7 +25,18 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private Text finalScore;
     [SerializeField] private Text finalScoreShadow;
     [SerializeField] private VisualEffect speedLines;
+    [SerializeField] private Slider musicSlider;
+    [SerializeField] private Slider sfxSlider;
     public PlayerMovement playerMovement;
+
+    public void Start()
+    {
+        if(SceneManager.GetActiveScene().name == "Main Menu")
+        {
+            musicSlider.value = SoundManager.instance.GetMusicVolume();
+            sfxSlider.value = SoundManager.instance.GetSFXVolume();
+        }
+    }
 
     public void StartRace()
     {
@@ -60,6 +72,9 @@ public class HUDManager : MonoBehaviour
 
     public void EndRace()
     {
+        SoundManager.instance.StopMusic();
+        SoundManager.instance.PlayFootsteps(false);
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.RACE_END);
         MainPanel.SetActive(false);
         EndGamePanel.SetActive(true);
         playerMovement.canMove = false;
@@ -92,61 +107,67 @@ public class HUDManager : MonoBehaviour
 
     private IEnumerator CountDownSecuence()
     {
-        CountDown.text = "3";
-        CountDownShadow.text = "3";
-        yield return new WaitForSeconds(1);
-        CountDown.text = "2";
-        CountDownShadow.text = "2";
-        yield return new WaitForSeconds(1);
-        CountDown.text = "1";
-        CountDownShadow.text = "1";
-        yield return new WaitForSeconds(1);
+        for (int i = 0; i < 12; i++)
+        {
+            CountDown.text = (12 - i).ToString();
+            CountDownShadow.text = (12 - i).ToString();
+            yield return new WaitForSeconds(1);
+        }
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.START);
         CountDown.text = "GO!";
         CountDownShadow.text = "GO!";
+        playerMovement.canMove = true;
         yield return new WaitForSeconds(1);
         CountDown.gameObject.SetActive(false);
         CountDownShadow.gameObject.SetActive(false);
-        playerMovement.canMove = true;
     }
 
     public void ShowOptions()
     {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         optionsPanel.SetActive(true);
     }
 
     public void HideOptions()
     {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         optionsPanel.SetActive(false);
     }
 
     public void ShowCredits()
     {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         creditsPanel.SetActive(true);
     }
 
     public void HideCredits()
     {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         creditsPanel.SetActive(false);
     }
 
     public void RestartGame()
     {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         Time.timeScale = 1;
         GameManager.instance.RestartGame();
     }
 
     public void ExitGame()
     {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         Application.Quit();
     }
 
     public void LoadLevel(int i)
     {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         GameManager.instance.LoadLevel(i);
     }
 
     public void LoadMainMenu()
     {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         Time.timeScale = 1;
         GameManager.instance.LoadMainMenu();
     }
@@ -155,6 +176,8 @@ public class HUDManager : MonoBehaviour
     {
         if(playerMovement.canMove)
         {
+            SoundManager.instance.PauseMusic();
+            SoundManager.instance.PlayFootsteps(false);
             Time.timeScale = 0;
             pausePanel.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
@@ -166,6 +189,7 @@ public class HUDManager : MonoBehaviour
     {
         if(playerMovement.canMove)
         {
+            SoundManager.instance.ResumeMusic();
             Time.timeScale = 1;
             pausePanel.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
@@ -175,11 +199,23 @@ public class HUDManager : MonoBehaviour
 
     public void GoToItchio()
     {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         Application.OpenURL("https://hollowblink.itch.io");
     }
 
     public void GoToTwitter()
     {
+        SoundManager.instance.PlaySFXByIndex(SoundManager.SFX.BUTTON_PRESSED);
         Application.OpenURL("https://twitter.com/hollowblink");
+    }
+
+    public void SetMusicVolume()
+    {
+        SoundManager.instance.SetMusicVolume(musicSlider.value);
+    }
+
+    public void SetSFXVolume()
+    {
+        SoundManager.instance.SetSFXVolume(sfxSlider.value);
     }
 }
