@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using Unity.VisualScripting;
 
 public class RunnerAgent : Agent
 {
@@ -48,5 +49,14 @@ public class RunnerAgent : Agent
     public void GiveReward()
     {
         AddReward(1f);
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Wall"))
+        {
+            AddReward(-1f);
+            EndEpisode();
+        }
     }
 }

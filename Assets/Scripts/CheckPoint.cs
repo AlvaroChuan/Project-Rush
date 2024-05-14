@@ -21,6 +21,10 @@ public class CheckPoint : MonoBehaviour
         {
             other.GetComponent<RunnerAgent>().GiveReward();
             other.GetComponent<AIMovement>().SetSpawnPoint();
+            if(firstCheckPoint)
+            {
+                GameManager.instance.ResetStarbits();
+            }
         }
     }
 }

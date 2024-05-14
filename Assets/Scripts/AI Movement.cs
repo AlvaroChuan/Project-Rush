@@ -99,19 +99,22 @@ public class AIMovement : MonoBehaviour
 
     private void RotatePlayer()
     {
-        Vector3 inputDir = new Vector3(horizontalInput, 0, verticalInput);
-        playerObj.forward = Vector3.Slerp(playerObj.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
+        Vector3 velDir = rb.velocity;
+        orientationForward.forward = Vector3.Slerp(orientationForward.forward, velDir.normalized, Time.deltaTime * (rotationSpeed - 15));
+        orientationRight.right = -Vector3.Cross(orientationForward.forward, transform.up);
+        orientationForward.forward = Vector3.Cross(orientationRight.right, transform.up);
+        playerObj.forward = Vector3.Slerp(playerObj.forward, velDir.normalized, Time.deltaTime * rotationSpeed);
         playerObj.localRotation = Quaternion.Euler(0, playerObj.localEulerAngles.y, 0);
     }
 
     private void GetWallsDistances()
     {
         RaycastHit hit;
-        if(Physics.Raycast(transform.position, -transform.right, out hit, 100f, wallMask))
+        if(Physics.Raycast(transform.position, -orientationRight.right, out hit, 100f, wallMask))
         {
             distanceToLeftWall = hit.distance;
         }
-        if(Physics.Raycast(transform.position, transform.right, out hit, 100f, wallMask))
+        if(Physics.Raycast(transform.position, orientationRight.right, out hit, 100f, wallMask))
         {
             distanceToRightWall = hit.distance;
         }
