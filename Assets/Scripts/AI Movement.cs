@@ -62,6 +62,7 @@ public class AIMovement : MonoBehaviour
     public float verticalInput;
     public int jumpInput;
     public int slideInput;
+    public int checkPointNumber;
 
     private enum MovementState
     {
@@ -113,10 +114,12 @@ public class AIMovement : MonoBehaviour
         if(Physics.Raycast(transform.position, -orientationRight.right, out hit, 100f, wallMask))
         {
             distanceToLeftWall = hit.distance;
+            Debug.DrawRay(transform.position, -orientationRight.right * hit.distance, Color.red);
         }
         if(Physics.Raycast(transform.position, orientationRight.right, out hit, 100f, wallMask))
         {
             distanceToRightWall = hit.distance;
+            Debug.DrawRay(transform.position, orientationRight.right * hit.distance, Color.red);
         }
     }
 
@@ -247,8 +250,9 @@ public class AIMovement : MonoBehaviour
         canJump = true;
     }
 
-    public void SetSpawnPoint()
+    public void SetSpawnPoint(int checkPointNumber)
     {
+        this.checkPointNumber = checkPointNumber;
         if(grounded) spawnPointPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         else
         {

@@ -13,8 +13,10 @@ public class RunnerAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        controller.SetSpawnPoint();
-        Debug.Log("Episode Begin");
+        controller.transform.position = new Vector3(0, 1, 0);
+        controller.transform.rotation = Quaternion.identity;
+        controller.rb.velocity = Vector3.zero;
+        controller.SetSpawnPoint(7);
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -34,6 +36,7 @@ public class RunnerAgent : Agent
         controller.verticalInput = verticalInput;
         controller.jumpInput = jumpInput;
         controller.slideInput = slideInput;
+        AddReward(-0.01f);
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -48,14 +51,20 @@ public class RunnerAgent : Agent
 
     public void GiveReward()
     {
-        AddReward(1f);
+        AddReward(10f);
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void GivePenalty()
+    {
+        AddReward(-100f);
+        EndEpisode();
+    }
+
+    public void OnCollisionEnter(Collider other)
     {
         if (other.CompareTag("Wall"))
         {
-            AddReward(-1f);
+            AddReward(-100f);
             EndEpisode();
         }
     }

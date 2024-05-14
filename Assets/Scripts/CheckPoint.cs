@@ -5,6 +5,7 @@ using UnityEngine;
 public class CheckPoint : MonoBehaviour
 {
     [SerializeField] private bool firstCheckPoint = false;
+    [SerializeField] private int checkPointNumber = 0;
 
     public void OnTriggerEnter(Collider other)
     {
@@ -19,12 +20,24 @@ public class CheckPoint : MonoBehaviour
         }
         else if (other.CompareTag("AI"))
         {
-            other.GetComponent<RunnerAgent>().GiveReward();
-            other.GetComponent<AIMovement>().SetSpawnPoint();
-            if(firstCheckPoint)
+            RunnerAgent ai = other.GetComponent<RunnerAgent>();
+            AIMovement aiMovement = other.GetComponent<AIMovement>();
+            if(checkPointNumber > aiMovement.checkPointNumber && !firstCheckPoint)
             {
+                ai.GiveReward();
+                aiMovement.SetSpawnPoint(checkPointNumber);
+            }
+            else if(checkPointNumber < aiMovement.checkPointNumber && !firstCheckPoint)
+            {
+                ai.GivePenalty();
+            }
+            else if(checkPointNumber < aiMovement.checkPointNumber && firstCheckPoint)
+            {
+                ai.GiveReward();
+                aiMovement.SetSpawnPoint(checkPointNumber);
                 GameManager.instance.ResetStarbits();
             }
+            else ai.GivePenalty();
         }
     }
 }
