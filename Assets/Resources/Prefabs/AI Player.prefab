@@ -5178,6 +5178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e20359007e73924d8ccdfe2fc19eff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agent: {fileID: 6001169107081972020}
   moveSpeed: 45
   gravity: 50
   orientationForward: {fileID: 2452556083974151019}
@@ -5208,7 +5209,7 @@ MonoBehaviour:
   rotationSpeed: 20
   animator: {fileID: 8469188907729848818}
   dust: {fileID: 1239865407704825049}
-  spawnPointPosition: {x: 0, y: 0, z: 0}
+  spawnPointPosition: {x: -0.0476799, y: 1.07, z: -1.8927426}
   spawnPointRotation: {x: 0, y: 0, z: 0, w: 0}
   outOfBoundsY: -1
   wallMask:
@@ -5216,13 +5217,24 @@ MonoBehaviour:
     m_Bits: 256
   rb: {fileID: 0}
   canMove: 1
-  distanceToLeftWall: 0
-  distanceToRightWall: 0
+  distances:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
   horizontalInput: 0
   verticalInput: 0
   jumpInput: 0
   slideInput: 0
-  checkPointNumber: 0
+  checkPointNumber: 18
 --- !u!114 &7835915768766421443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5236,7 +5248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 5
+    VectorObservationSize: 15
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -5245,8 +5257,8 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
-  m_InferenceDevice: 1
+  m_Model: {fileID: 5022602860645237092, guid: b6f356061afab824693985c5024a22b7, type: 3}
+  m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: RunnerAgent
   TeamId: 0
@@ -5297,7 +5309,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2902496c0120472b90269f94a0aec7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Record: 1
+  Record: 0
   NumStepsToRecord: 0
   DemonstrationName: RunnerAgentDemo
   DemonstrationDirectory: Demos
@@ -5818,6 +5830,10 @@ PrefabInstance:
     - target: {fileID: 400016, guid: d917c7129a9e4c74e84188b278d96de7, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400140, guid: d917c7129a9e4c74e84188b278d96de7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.019
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: d917c7129a9e4c74e84188b278d96de7, type: 3}
       propertyPath: m_Controller

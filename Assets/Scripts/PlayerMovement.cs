@@ -66,10 +66,7 @@ public class PlayerMovement : MonoBehaviour
     private MovementState movementState;
     private RaycastHit contactPoint;
     public bool canMove = false;
-
-    //For Machine Learning
-    public float distanceToLeftWall;
-    public float distanceToRightWall;
+    public int checkPointNumber = 18;
 
     private enum MovementState
     {
@@ -99,7 +96,6 @@ public class PlayerMovement : MonoBehaviour
         else moveDirection = Vector3.zero;
         SpeedControl();
         AnimationHandler();
-        GetWallsDistances();
     }
 
     private void FixedUpdate()
@@ -107,19 +103,6 @@ public class PlayerMovement : MonoBehaviour
         if(canMove) Move();
         CustomGravity();
         StateHandler();
-    }
-
-    private void GetWallsDistances()
-    {
-        RaycastHit hit;
-        if(Physics.Raycast(transform.position, -transform.right, out hit, 100f, wallMask))
-        {
-            distanceToLeftWall = hit.distance;
-        }
-        if(Physics.Raycast(transform.position, transform.right, out hit, 100f, wallMask))
-        {
-            distanceToRightWall = hit.distance;
-        }
     }
 
     private void StateHandler()
@@ -265,8 +248,9 @@ public class PlayerMovement : MonoBehaviour
         canJump = true;
     }
 
-    public void SetSpawnPoint()
+    public void SetSpawnPoint(int checkPointNumber)
     {
+        this.checkPointNumber = checkPointNumber;
         if(grounded) spawnPointPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         else
         {

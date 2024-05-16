@@ -11,11 +11,16 @@ public class CheckPoint : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<PlayerMovement>().SetSpawnPoint();
-            if(firstCheckPoint)
+            PlayerMovement player  = other.GetComponent<PlayerMovement>();
+            if(checkPointNumber < player.checkPointNumber && firstCheckPoint)
             {
+                player.SetSpawnPoint(checkPointNumber);
                 GameManager.instance.NextLap();
                 GameManager.instance.ResetStarbits();
+            }
+            else if(checkPointNumber > player.checkPointNumber && !firstCheckPoint)
+            {
+                player.SetSpawnPoint(checkPointNumber);
             }
         }
         else if (other.CompareTag("AI"))
@@ -24,7 +29,7 @@ public class CheckPoint : MonoBehaviour
             AIMovement aiMovement = other.GetComponent<AIMovement>();
             if(checkPointNumber > aiMovement.checkPointNumber && !firstCheckPoint)
             {
-                ai.GiveReward();
+                ai.GiveReward(1);
                 aiMovement.SetSpawnPoint(checkPointNumber);
             }
             else if(checkPointNumber < aiMovement.checkPointNumber && !firstCheckPoint)
@@ -33,7 +38,7 @@ public class CheckPoint : MonoBehaviour
             }
             else if(checkPointNumber < aiMovement.checkPointNumber && firstCheckPoint)
             {
-                ai.GiveReward();
+                ai.GiveReward(1);
                 aiMovement.SetSpawnPoint(checkPointNumber);
                 GameManager.instance.ResetStarbits();
             }

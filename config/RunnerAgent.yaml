@@ -19,10 +19,11 @@ behaviors:
         gamma: 0.99
         strength: 1.0
       gail:
-        strength: 0.9
+        strength: 0.2
+        gamma: 0.99
         demo_path: Demos/RunnerAgentDemo.demo
     behavioral_cloning:
-      strength: 0.1
+      strength: 0.8
       demo_path: Demos/RunnerAgentDemo.demo
     max_steps: 500000
     time_horizon: 64

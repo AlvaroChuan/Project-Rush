@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     private HUDManager hudManager;
     [SerializeField] private GameObject[] starbits;
     private bool gameStarted = false;
-    private int[] scores = new int[5];
+    private int[] scores = new int[9];
     private int lap = 3;
     private int speed;
     private Rigidbody playerRigidbody;
@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
     public void StartRace()
     {
         gameStarted = true;
-        scores = new int[] {0,0,0,0,0};
+        scores = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
         lap = 0;
         playerRigidbody = hudManager.playerMovement.gameObject.GetComponent<Rigidbody>();
         GetStarBits();
@@ -52,7 +52,10 @@ public class GameManager : MonoBehaviour
             if (speed > 0) speed += 100;
             hudManager.UpdateSpeed(speed);
             hudManager.UpdateLap(lap);
-            hudManager.UpdateScore(scores[0], 0);
+            for (int i = 0; i < scores.Length; i++)
+            {
+                hudManager.UpdateScore(scores[i], i);
+            }
         }
     }
 

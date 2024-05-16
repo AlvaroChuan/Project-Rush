@@ -46,7 +46,7 @@ public class SoundManager : MonoBehaviour
 
     void Update()
     {
-        transform.position = Camera.main.transform.position;
+        //transform.position = Camera.main.transform.position;
     }
 
     public void PlaySFXByName(string name)

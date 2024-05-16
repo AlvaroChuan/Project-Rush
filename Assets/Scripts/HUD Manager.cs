@@ -29,6 +29,7 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private Slider musicSlider;
     [SerializeField] private Slider sfxSlider;
     public PlayerMovement playerMovement;
+    [SerializeField] private AIMovement[] aiMovement;
 
     public void Start()
     {
@@ -119,6 +120,10 @@ public class HUDManager : MonoBehaviour
         CountDown.text = "GO!";
         CountDownShadow.text = "GO!";
         playerMovement.canMove = true;
+        foreach (AIMovement ai in aiMovement)
+        {
+            ai.canMove = true;
+        }
         yield return new WaitForSeconds(1);
         CountDown.gameObject.SetActive(false);
         CountDownShadow.gameObject.SetActive(false);
@@ -203,6 +208,7 @@ public class HUDManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+
     }
 
     public void GoToItchio()

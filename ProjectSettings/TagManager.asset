@@ -7,6 +7,7 @@ TagManager:
   - Hook
   - AI
   - Wall
+  - Starbit
   layers:
   - Default
   - TransparentFX

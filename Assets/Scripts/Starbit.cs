@@ -17,7 +17,6 @@ public class Starbit : MonoBehaviour
         {
             RunnerAgent ai = other.GetComponent<RunnerAgent>();
             GameManager.instance.AddPuntuation(10, ai.playerNumber);
-            ai.GiveReward();
             gameObject.SetActive(false);
         }
     }
