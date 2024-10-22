@@ -2312,6 +2312,7 @@ MonoBehaviour:
   musicSlider: {fileID: 1218354908}
   sfxSlider: {fileID: 995456030}
   playerMovement: {fileID: 0}
+  aiMovement: []
 --- !u!4 &1136494220
 Transform:
   m_ObjectHideFlags: 0
